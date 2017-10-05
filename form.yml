@@ -1,0 +1,12 @@
+---
+cluster: "owens"
+form:
+  - bc_num_hours
+  - bc_num_slots
+  - node_type
+  - bc_account
+  - bc_email_on_started
+attributes:
+  bc_account:
+    help: "You can leave this blank if **not** in multiple projects."
+  node_type: ":ppn=28"

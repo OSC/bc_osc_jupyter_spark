@@ -1,0 +1,7 @@
+---
+batch_connect:
+  template: "basic"
+script:
+  native:
+    resources:
+      nodes: "<%= bc_num_slots.blank? ? "1" : bc_num_slots %><%= node_type %>"

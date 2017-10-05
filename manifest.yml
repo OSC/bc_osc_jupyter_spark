@@ -1,0 +1,8 @@
+---
+name: Jupyter + Spark
+category: Interactive Apps
+subcategory: Servers
+role: batch_connect
+description: |
+  This app will launch a Jupyter Notebook server and a Spark cluster on one or
+  more Owens nodes.

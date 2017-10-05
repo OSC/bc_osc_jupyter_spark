@@ -1,0 +1,29 @@
+#!/bin/bash -l
+
+# Set working directory to home directory
+cd "${HOME}"
+
+#
+# Start Jupyter Notebook Server + Spark cluster
+#
+
+# Restore the module environment to avoid conflicts
+module restore
+
+# Load the required modules
+module load python/3.5 spark/2.0.0
+
+# Launch Spark cluster
+pbs-spark-submit
+
+# Fixes issue where it launches system-installed python instead of one in PATH
+export PYSPARK_PYTHON="$(command -v python)"
+
+# Use Jupyter instead of iPython
+export PYSPARK_DRIVER_PYTHON="jupyter"
+
+# Command line arguments for Jupyter
+export PYSPARK_DRIVER_PYTHON_OPTS="notebook --config='${CONFIG_FILE}'"
+
+# Launch Jupyter Notebook interface to Spark
+pyspark --master spark://0.0.0.0:7077
