@@ -3,10 +3,21 @@ cluster: "owens"
 form:
   - bc_num_hours
   - bc_num_slots
+  - num_workers
   - node_type
   - bc_account
   - bc_email_on_started
 attributes:
   bc_account:
     help: "You can leave this blank if **not** in multiple projects."
+  num_workers:
+    widget: "select"
+    label: "Number of workers"
+    options:
+      - [ "1 worker per node (28 cores per worker)", "1" ]
+      - [ "2 workers per node (14 cores per worker)", "2" ]
+      - [ "4 workers per node (7 cores per worker)", "4" ]
+      - [ "7 workers per node (4 cores per worker)", "7" ]
+      - [ "14 workers per node (2 cores per worker)", "14" ]
+      - [ "28 workers per node (1 core per worker)", "28" ]
   node_type: ":ppn=28"

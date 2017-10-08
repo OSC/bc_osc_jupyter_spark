@@ -1,8 +1,5 @@
 #!/bin/bash -l
 
-# Set working directory to home directory
-cd "${HOME}"
-
 #
 # Start Jupyter Notebook Server + Spark cluster
 #
@@ -11,10 +8,72 @@ cd "${HOME}"
 module restore
 
 # Load the required modules
-module load python/3.5 spark/2.0.0
+module load python/3.5 spark/2.1.0
 
-# Launch Spark cluster
-pbs-spark-submit
+#
+# Launch Spark cluster in standalone mode
+#
+
+# Create log directory
+export LOG_ROOT="${PWD}/logs"
+mkdir "${LOG_ROOT}"
+
+# Set master connection information
+source "${PWD}/script-helpers.sh"
+export SPARK_MASTER_HOST=${HOSTNAME}
+export SPARK_MASTER_PORT=$(find_port ${SPARK_MASTER_HOST})
+export SPARK_MASTER_WEBUI_PORT=$(find_port ${SPARK_MASTER_HOST})
+export MASTER_LOG_FILE="${LOG_ROOT}/spark-master-${SPARK_MASTER_HOST}.out"
+
+# Generate Spark configuration file
+export SPARK_CONFIG_FILE="${PWD}/spark-defaults.conf"
+(
+umask 077
+cat > "${SPARK_CONFIG_FILE}" << EOL
+spark.ui.reverseProxy     true
+#spark.ui.reverseProxyUrl  https://ondemand.osc.edu/node/${SPARK_MASTER_HOST}/${SPARK_MASTER_WEBUI_PORT}
+spark.authenticate        true
+spark.authenticate.secret $(create_passwd)
+EOL
+)
+
+# Launch master
+echo "Launching master..."
+"${SPARK_HOME}/bin"/spark-class "org.apache.spark.deploy.master.Master" \
+    --properties-file "${SPARK_CONFIG_FILE}" \
+  &> "${MASTER_LOG_FILE}" &
+
+# Wait for the master server to fully start
+echo "Waiting for master server to listen on port ${SPARK_MASTER_PORT}..."
+if wait_for_port ${SPARK_MASTER_HOST} ${SPARK_MASTER_PORT} 20; then
+  echo "Discovered master listening on port ${SPARK_MASTER_PORT}!"
+else
+  echo "Failed to launch master!" ; exit 1
+fi
+sleep 2
+
+# Launch workers
+echo "Launching workers..."
+<%- context.num_workers.to_i.times do |i| -%>
+pbsdsh -u bash -c "
+  source \"${PWD}/script-helpers.sh\"
+  export SPARK_WORKER_HOST=\${HOSTNAME}
+  export SPARK_WORKER_PORT=\$(find_port \${SPARK_WORKER_HOST})
+  export SPARK_WORKER_WEBUI_PORT=\$(find_port \${SPARK_WORKER_HOST})
+  export SPARK_WORKER_DIR=\"${PWD}/work\"
+  export SPARK_WORKER_CORES=<%= "#{28 / context.num_workers.to_i}" %>
+  export WORKER_LOG_FILE=\"${LOG_ROOT}/spark-worker-\${SPARK_WORKER_HOST}-<%= "#{i}" %>.out\"
+
+  \"${SPARK_HOME}/bin\"/spark-class \"org.apache.spark.deploy.worker.Worker\" \
+      --properties-file \"${SPARK_CONFIG_FILE}\" \
+      spark://${SPARK_MASTER_HOST}:${SPARK_MASTER_PORT} \
+    &> \"\${WORKER_LOG_FILE}\"
+" &
+<%- end -%>
+
+#
+# Launch Jupyter with PySpark
+#
 
 # Fixes issue where it launches system-installed python instead of one in PATH
 export PYSPARK_PYTHON="$(command -v python)"
@@ -25,5 +84,14 @@ export PYSPARK_DRIVER_PYTHON="jupyter"
 # Command line arguments for Jupyter
 export PYSPARK_DRIVER_PYTHON_OPTS="notebook --config='${CONFIG_FILE}'"
 
+# Set working directory to home directory
+cd "${HOME}"
+
 # Launch Jupyter Notebook interface to Spark
-pyspark --master spark://0.0.0.0:7077
+echo "Launching Jupyter..."
+pyspark \
+  --master spark://${SPARK_MASTER_HOST}:${SPARK_MASTER_PORT} \
+  --driver-memory 10G \
+  --executor-memory 10G \
+  --conf spark.driver.maxResultSize=0 \
+  --properties-file "${SPARK_CONFIG_FILE}"
