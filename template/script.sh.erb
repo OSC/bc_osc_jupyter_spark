@@ -19,8 +19,7 @@ export LOG_ROOT="${PWD}/logs"
 mkdir "${LOG_ROOT}"
 
 # Set master connection information
-source "${PWD}/script-helpers.sh"
-export SPARK_MASTER_HOST=${HOSTNAME}
+export SPARK_MASTER_HOST=${host}
 export SPARK_MASTER_PORT=$(find_port ${SPARK_MASTER_HOST})
 export SPARK_MASTER_WEBUI_PORT=$(find_port ${SPARK_MASTER_HOST})
 export MASTER_LOG_FILE="${LOG_ROOT}/spark-master-${SPARK_MASTER_HOST}.out"
@@ -38,38 +37,43 @@ EOL
 )
 
 # Launch master
-echo "Launching master..."
+echo "Launching master on ${SPARK_MASTER_HOST}:${SPARK_MASTER_PORT}..."
 "${SPARK_HOME}/bin"/spark-class "org.apache.spark.deploy.master.Master" \
     --properties-file "${SPARK_CONFIG_FILE}" \
   &> "${MASTER_LOG_FILE}" &
 
 # Wait for the master server to fully start
-echo "Waiting for master server to listen on port ${SPARK_MASTER_PORT}..."
-if wait_for_port ${SPARK_MASTER_HOST} ${SPARK_MASTER_PORT} 20; then
+echo "Waiting for master server to open port ${SPARK_MASTER_PORT}..."
+if wait_until_port_used "${SPARK_MASTER_HOST}:${SPARK_MASTER_PORT}"; then
   echo "Discovered master listening on port ${SPARK_MASTER_PORT}!"
 else
-  echo "Failed to launch master!" ; exit 1
+  echo "Timed out waiting for master to open port ${SPARK_MASTER_PORT}!" ; exit 1
 fi
 sleep 2
 
 # Launch workers
 echo "Launching workers..."
-<%- context.num_workers.to_i.times do |i| -%>
-pbsdsh -u bash -c "
-  source \"${PWD}/script-helpers.sh\"
-  export SPARK_WORKER_HOST=\${HOSTNAME}
-  export SPARK_WORKER_PORT=\$(find_port \${SPARK_WORKER_HOST})
-  export SPARK_WORKER_WEBUI_PORT=\$(find_port \${SPARK_WORKER_HOST})
-  export SPARK_WORKER_DIR=\"${PWD}/work\"
-  export SPARK_WORKER_CORES=<%= "#{28 / context.num_workers.to_i}" %>
-  export WORKER_LOG_FILE=\"${LOG_ROOT}/spark-worker-\${SPARK_WORKER_HOST}-<%= "#{i}" %>.out\"
+for ((i=0; i<<%= context.num_workers %>; i++)); do
+  pbsdsh -u bash -c "
+    $(declare -f source_helpers)
+    source_helpers
 
-  \"${SPARK_HOME}/bin\"/spark-class \"org.apache.spark.deploy.worker.Worker\" \
-      --properties-file \"${SPARK_CONFIG_FILE}\" \
-      spark://${SPARK_MASTER_HOST}:${SPARK_MASTER_PORT} \
-    &> \"\${WORKER_LOG_FILE}\"
-" &
-<%- end -%>
+    # Set worker connection information
+    export SPARK_WORKER_HOST=\${HOSTNAME}
+    export SPARK_WORKER_PORT=\$(find_port \${SPARK_WORKER_HOST})
+    export SPARK_WORKER_WEBUI_PORT=\$(find_port \${SPARK_WORKER_HOST})
+    export SPARK_WORKER_DIR=\"${PWD}/work\"
+    export SPARK_WORKER_CORES=<%= "#{28 / context.num_workers.to_i}" %>
+    export WORKER_LOG_FILE=\"${LOG_ROOT}/spark-worker-\${SPARK_WORKER_HOST}-${i}.out\"
+
+    # Launch worker
+    echo \"Launching worker #${i} on \${SPARK_WORKER_HOST}:\${SPARK_WORKER_PORT}...\"
+    \"${SPARK_HOME}/bin\"/spark-class \"org.apache.spark.deploy.worker.Worker\" \
+        --properties-file \"${SPARK_CONFIG_FILE}\" \
+        spark://${SPARK_MASTER_HOST}:${SPARK_MASTER_PORT} \
+      &> \"\${WORKER_LOG_FILE}\"
+  " &
+done
 
 #
 # Launch Jupyter with PySpark

@@ -1,5 +1,5 @@
 # Find available port to run server on
-port=$(find_port)
+port=$(find_port ${host})
 
 # Generate SHA1 encrypted password (requires OpenSSL installed)
 SALT="$(create_passwd 16)"
