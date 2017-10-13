@@ -6,6 +6,7 @@ form:
   - num_workers
   - node_type
   - bc_account
+  - only_driver_on_root
   - bc_email_on_started
 attributes:
   bc_account:
@@ -21,3 +22,9 @@ attributes:
       - [ "14 workers per node (2 cores per worker)", "14" ]
       - [ "28 workers per node (1 core per worker)", "28" ]
   node_type: ":ppn=28"
+  only_driver_on_root:
+    widget: "check_box"
+    label: Only launch the driver on the root node.
+    help: |
+      This is typically used for `.collect` and `.take` operations that require
+      a large amount of memory allocated (> 2GB) for the driver process.

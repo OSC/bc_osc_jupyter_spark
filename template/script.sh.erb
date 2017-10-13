@@ -55,6 +55,9 @@ sleep 2
 echo "Launching workers..."
 for ((i=0; i<<%= context.num_workers %>; i++)); do
   pbsdsh -u bash -c "
+    <%- if context.only_driver_on_root == "1" -%>
+    [[ \${PBS_NODENUM} == "0" ]] && exit 0
+    <%- end -%>
     $(declare -f source_helpers)
     source_helpers
 
@@ -95,7 +98,7 @@ cd "${HOME}"
 echo "Launching Jupyter..."
 pyspark \
   --master spark://${SPARK_MASTER_HOST}:${SPARK_MASTER_PORT} \
-  --driver-memory 10G \
-  --executor-memory 10G \
+  --driver-memory <%= context.only_driver_on_root == "1" ? "120" : "2" %>G \
+  --executor-memory <%= "#{120 / context.num_workers.to_i}" %>G \
   --conf spark.driver.maxResultSize=0 \
   --properties-file "${SPARK_CONFIG_FILE}"
