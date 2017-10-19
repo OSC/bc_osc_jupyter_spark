@@ -1,5 +1,9 @@
 #!/bin/bash -l
 
+<%- avail_cores = context.node_type.include?("hugemem") ? 48   : 28  -%>
+<%- avail_mem   = context.node_type.include?("hugemem") ? 1528 : 120 -%>
+<%- num_workers = context.num_workers.to_i -%>
+
 #
 # Start Jupyter Notebook Server + Spark cluster
 #
@@ -33,6 +37,8 @@ spark.ui.reverseProxy     true
 #spark.ui.reverseProxyUrl  https://ondemand.osc.edu/node/${SPARK_MASTER_HOST}/${SPARK_MASTER_WEBUI_PORT}
 spark.authenticate        true
 spark.authenticate.secret $(create_passwd)
+# Comment out below when reverse proxy with path is resolved
+spark.ui.enabled          false
 EOL
 )
 
@@ -53,7 +59,7 @@ sleep 2
 
 # Launch workers
 echo "Launching workers..."
-for ((i=0; i<<%= context.num_workers %>; i++)); do
+for ((i=0; i<<%= num_workers %>; i++)); do
   pbsdsh -u bash -c "
     <%- if context.only_driver_on_root == "1" -%>
     [[ \${PBS_NODENUM} == "0" ]] && exit 0
@@ -66,7 +72,7 @@ for ((i=0; i<<%= context.num_workers %>; i++)); do
     export SPARK_WORKER_PORT=\$(find_port \${SPARK_WORKER_HOST})
     export SPARK_WORKER_WEBUI_PORT=\$(find_port \${SPARK_WORKER_HOST})
     export SPARK_WORKER_DIR=\"${PWD}/work\"
-    export SPARK_WORKER_CORES=<%= "#{28 / context.num_workers.to_i}" %>
+    export SPARK_WORKER_CORES=<%= avail_cores / num_workers %>
     export WORKER_LOG_FILE=\"${LOG_ROOT}/spark-worker-\${SPARK_WORKER_HOST}-${i}.out\"
 
     # Launch worker
@@ -98,7 +104,7 @@ cd "${HOME}"
 echo "Launching Jupyter..."
 pyspark \
   --master spark://${SPARK_MASTER_HOST}:${SPARK_MASTER_PORT} \
-  --driver-memory <%= context.only_driver_on_root == "1" ? "120" : "2" %>G \
-  --executor-memory <%= "#{120 / context.num_workers.to_i}" %>G \
+  --driver-memory <%= context.only_driver_on_root == "1" ? avail_mem : 2 %>G \
+  --executor-memory <%= avail_mem / num_workers %>G \
   --conf spark.driver.maxResultSize=0 \
   --properties-file "${SPARK_CONFIG_FILE}"
