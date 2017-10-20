@@ -8,8 +8,8 @@
 # Start Jupyter Notebook Server + Spark cluster
 #
 
-# Restore the module environment to avoid conflicts
-module restore
+# Purge the module environment to avoid conflicts
+module purge
 
 # Load the required modules
 module load python/3.5 spark/2.1.0
@@ -37,8 +37,12 @@ spark.ui.reverseProxy     true
 #spark.ui.reverseProxyUrl  https://ondemand.osc.edu/node/${SPARK_MASTER_HOST}/${SPARK_MASTER_WEBUI_PORT}
 spark.authenticate        true
 spark.authenticate.secret $(create_passwd)
-# Comment out below when reverse proxy with path is resolved
+# Comment out below when reverse proxy and authentication are added
+# This still starts the Web UI on the master/worker procs, but disables it for
+# the Application driver
 spark.ui.enabled          false
+# So we need to disable the ability to kill applications
+spark.ui.killEnabled      false
 EOL
 )
 
