@@ -16,7 +16,7 @@ OnDemand node):
   versions are untested but may work for you)
 - [OpenSSL](https://www.openssl.org/) 1.0.1+ (used to hash the Jupyter Notebook
   server password)
-- [Apache Spark](https://spark.apache.org/) 2.0.0+
+- [Apache Spark](https://spark.apache.org/) 2.1.0+
 
 **Optional** software:
 
