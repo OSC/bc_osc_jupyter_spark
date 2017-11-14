@@ -1,12 +1,11 @@
-<p>
-  If you see <code>Failed to connect to ...</code>, then wait a few seconds
-  before trying the <strong>Connect to Jupyter</strong> button again. This
-  warning appeared because the Jupyter Notebook is still starting up.
-</p>
+Some helpful resources on using Apache Spark in a Jupyter notebook:
+
+- [Apache Spark Examples](https://spark.apache.org/examples.html)
+- [RDD Basics](https://github.com/jadianes/spark-py-notebooks/blob/master/nb2-rdd-basics/nb2-rdd-basics.ipynb)
 
 <form action="/node/<%= host %>/<%= port %>/login" method="post" target="_blank">
   <input type="hidden" name="password" value="<%= password %>">
-  <button class="btn btn-primary" type="submit">
+  <button class="btn btn-primary" type="submit" style="margin-top: 6px;">
     <i class="fa fa-eye"></i> Connect to Jupyter
   </button>
 </form>

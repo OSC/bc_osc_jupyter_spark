@@ -35,7 +35,7 @@ attributes:
       - [ "hugemem", ":ppn=48:hugemem" ]
   only_driver_on_root:
     widget: "check_box"
-    label: Only launch the driver on the root node.
+    label: Only launch the driver on the master node.
     help: |
       This is typically used for `.collect` and `.take` operations that require
       a large amount of memory allocated (> 2GB) for the driver process.
