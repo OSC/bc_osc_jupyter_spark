@@ -29,15 +29,6 @@ OnDemand node):
   used to load appropriate environments within the batch job before launching
   the Jupyter Notebook server.
 
-> **Note:**
->
-> It uses and expects a local copy of a custom script to launch Spark master
-> and workers on the assigned nodes:
->
-> ```
-> /usr/local/bin/pbs-spark-submit
-> ```
-
 ## Install
 
 Use Git to clone this app and checkout the desired branch/version you want to
