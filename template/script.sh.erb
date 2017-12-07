@@ -4,15 +4,31 @@
 <%- avail_mem   = context.node_type.include?("hugemem") ? 1528 : 120 -%>
 <%- num_workers = context.num_workers.to_i -%>
 
+<%-
+  spark_config = {
+    "spark.ui.reverseProxy" => "true",
+    #"spark.ui.reverseProxyUrl" => "https://ondemand.osc.edu/node/${SPARK_MASTER_HOST}/${SPARK_MASTER_WEBUI_PORT}",
+    "spark.authenticate" => "true",
+    "spark.authenticate.secret" => "${SPARK_SECRET}",
+    # Comment out below when reverse proxy and authentication are added
+    # This still starts the Web UI on the master/worker procs, but disables it for
+    # the Application driver
+    "spark.ui.enabled" => "false",
+    # So we need to disable the ability to kill applications
+    "spark.ui.killEnabled" => "false",
+  }
+-%>
+
 #
 # Start Jupyter Notebook server + Spark cluster
 #
 
-# Purge the module environment to avoid conflicts
-module purge
-
-# Load the required modules
-module load python/3.5 spark/2.1.0
+# Load the required environment
+setup_env () {
+  module purge
+  module load python/3.5 spark/2.1.0
+}
+setup_env
 
 #
 # Launch Spark cluster in standalone mode
@@ -28,29 +44,27 @@ export SPARK_MASTER_PORT=$(find_port ${SPARK_MASTER_HOST})
 export SPARK_MASTER_WEBUI_PORT=$(find_port ${SPARK_MASTER_HOST})
 export MASTER_LOG_FILE="${LOG_ROOT}/spark-master-${SPARK_MASTER_HOST}.out"
 
+# Generate Spark secret
+SPARK_SECRET="$(create_passwd)"
+
 # Generate Spark configuration file
 export SPARK_CONFIG_FILE="${PWD}/spark-defaults.conf"
 (
 umask 077
 cat > "${SPARK_CONFIG_FILE}" << EOL
-spark.ui.reverseProxy     true
-#spark.ui.reverseProxyUrl  https://ondemand.osc.edu/node/${SPARK_MASTER_HOST}/${SPARK_MASTER_WEBUI_PORT}
-spark.authenticate        true
-spark.authenticate.secret $(create_passwd)
-# Comment out below when reverse proxy and authentication are added
-# This still starts the Web UI on the master/worker procs, but disables it for
-# the Application driver
-spark.ui.enabled          false
-# So we need to disable the ability to kill applications
-spark.ui.killEnabled      false
+<%- spark_config.each do |k, v| -%>
+<%= k %> <%= v %>
+<%- end -%>
 EOL
 )
 
 # Launch master
 echo "Launching master on ${SPARK_MASTER_HOST}:${SPARK_MASTER_PORT}..."
+set -x
 "${SPARK_HOME}/bin"/spark-class "org.apache.spark.deploy.master.Master" \
     --properties-file "${SPARK_CONFIG_FILE}" \
   &> "${MASTER_LOG_FILE}" &
+{ set +x; } 2>/dev/null
 
 # Wait for the master server to fully start
 echo "Waiting for master server to open port ${SPARK_MASTER_PORT}..."
@@ -64,12 +78,16 @@ sleep 2
 # Launch workers
 echo "Launching workers..."
 for ((i=0; i<<%= num_workers %>; i++)); do
-  pbsdsh -u bash -c "
+  pbsdsh -u bash -l -c "
     <%- if context.only_driver_on_root == "1" -%>
     [[ \${PBS_NODENUM} == "0" ]] && exit 0
     <%- end -%>
     $(declare -f source_helpers)
     source_helpers
+
+    # Load the required environment
+    $(declare -f setup_env)
+    setup_env
 
     # Set worker connection information
     export SPARK_WORKER_HOST=\${HOSTNAME}
@@ -81,6 +99,7 @@ for ((i=0; i<<%= num_workers %>; i++)); do
 
     # Launch worker
     echo \"Launching worker #${i} on \${SPARK_WORKER_HOST}:\${SPARK_WORKER_PORT}...\"
+    set -x
     \"${SPARK_HOME}/bin\"/spark-class \"org.apache.spark.deploy.worker.Worker\" \
         --properties-file \"${SPARK_CONFIG_FILE}\" \
         spark://${SPARK_MASTER_HOST}:${SPARK_MASTER_PORT} \
@@ -91,9 +110,6 @@ done
 #
 # Launch Jupyter with PySpark
 #
-
-# Fixes issue where it launches system-installed python instead of one in PATH
-export PYSPARK_PYTHON="$(command -v python)"
 
 # Use Jupyter instead of iPython
 export PYSPARK_DRIVER_PYTHON="jupyter"
@@ -106,6 +122,7 @@ cd "${HOME}"
 
 # Launch Jupyter Notebook interface to Spark
 echo "Launching Jupyter..."
+set -x
 pyspark \
   --master spark://${SPARK_MASTER_HOST}:${SPARK_MASTER_PORT} \
   --driver-memory <%= context.only_driver_on_root == "1" ? avail_mem : 2 %>G \
