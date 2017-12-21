@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Fixed
+- Disable randomized hash for string in Python 3.3+.
+  [#4](https://github.com/OSC/bc_osc_jupyter_spark/issues/4)
 
 ## [0.0.2] - 2017-12-07
 ### Changed
