@@ -7,6 +7,7 @@ form:
   - node_type
   - num_workers
   - only_driver_on_root
+  - include_tutorials
   - bc_email_on_started
 attributes:
   bc_account:
@@ -40,3 +41,6 @@ attributes:
     help: |
       This is typically used for `.collect` and `.take` operations that require
       a large amount of memory allocated (> 2GB) for the driver process.
+  include_tutorials:
+    widget: "check_box"
+    label: Include access to OSC tutorial/workshop notebooks.

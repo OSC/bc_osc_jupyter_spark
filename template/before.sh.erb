@@ -1,3 +1,6 @@
+# Export the module function if it exists
+[[ $(type -t module) == "function" ]] && export -f module
+
 # Find available port to run server on
 port=$(find_port ${host})
 
@@ -5,6 +8,9 @@ port=$(find_port ${host})
 SALT="$(create_passwd 16)"
 password="$(create_passwd 16)"
 PASSWORD_SHA1="$(echo -n "${password}${SALT}" | openssl dgst -sha1 | awk '{print $NF}')"
+
+# Notebook root directory
+export NOTEBOOK_ROOT="${HOME}"
 
 # The `$CONFIG_FILE` environment variable is exported as it is used in the main
 # `script.sh.erb` file when launching the Jupyter Notebook server.
@@ -14,6 +20,8 @@ export CONFIG_FILE="${PWD}/config.py"
 (
 umask 077
 cat > "${CONFIG_FILE}" << EOL
+c.JupyterApp.config_file_name = 'ondemand_config'
+c.KernelSpecManager.ensure_native_kernel = False
 c.NotebookApp.ip = '*'
 c.NotebookApp.port = ${port}
 c.NotebookApp.port_retries = 0
@@ -21,13 +29,23 @@ c.NotebookApp.password = u'sha1:${SALT}:${PASSWORD_SHA1}'
 c.NotebookApp.base_url = '/node/${host}/${port}/'
 c.NotebookApp.open_browser = False
 c.NotebookApp.allow_origin = '*'
-c.NotebookApp.notebook_dir = '${HOME}'
+c.NotebookApp.notebook_dir = '${NOTEBOOK_ROOT}'
 c.NotebookApp.disable_check_xsrf = True
-c.NotebookApp.kernel_spec_manager_class = "nb_conda_kernels.CondaKernelSpecManager"
-c.NotebookApp.nbserver_extensions = {
-  "nb_conda": True,
-  "nb_anacondacloud": True,
-  "nbpresent": True
-}
 EOL
 )
+
+<%- if context.include_tutorials == "1" -%>
+#
+# Create workshop/tutorial notebooks
+#
+
+export tutorials_root="/jupyter/tutorials/jupyter_spark"
+export TUTORIALS_ROOT="${NOTEBOOK_ROOT}${tutorials_root}"
+mkdir -p "${TUTORIALS_ROOT}"
+
+# Copy over workshops/tutorials
+set -x
+ln -sfn "/users/PZS0645/support/workshop/Bigdata"/*.ipynb "${TUTORIALS_ROOT}"
+symlinks -d "${TUTORIALS_ROOT}"
+{ set +x; } 2>/dev/null
+<%- end -%>

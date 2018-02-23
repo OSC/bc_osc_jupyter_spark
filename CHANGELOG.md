@@ -5,6 +5,16 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- Added the various Python modules on OSC Owens as Jupyter kernels.
+- Added support to copy over tutorials/workshops to user's home directory.
+- Added button to connection panel to directly access tutorial directory.
+
+### Changed
+- Changed the way we launch Jupyter notebook by now pointing to a custom
+  location for the Jupyter notebook installation.
+- Stopped using login shells to speed up process start times.
+- Changed icon for "Launch Jupyter" button.
 
 ## [0.0.3] - 2017-12-21
 ### Fixed
