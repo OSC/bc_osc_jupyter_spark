@@ -10,7 +10,7 @@ password="$(create_passwd 16)"
 PASSWORD_SHA1="$(echo -n "${password}${SALT}" | openssl dgst -sha1 | awk '{print $NF}')"
 
 # Notebook root directory
-export NOTEBOOK_ROOT="${HOME}"
+export NOTEBOOK_ROOT="${NOTEBOOK_ROOT:-${HOME}}"
 
 # The `$CONFIG_FILE` environment variable is exported as it is used in the main
 # `script.sh.erb` file when launching the Jupyter Notebook server.
@@ -39,7 +39,7 @@ EOL
 # Create workshop/tutorial notebooks
 #
 
-export tutorials_root="/jupyter/tutorials/jupyter_spark"
+export tutorials_root="/jupyter/tutorials/jupyter_spark" # connection variable
 export TUTORIALS_ROOT="${NOTEBOOK_ROOT}${tutorials_root}"
 mkdir -p "${TUTORIALS_ROOT}"
 

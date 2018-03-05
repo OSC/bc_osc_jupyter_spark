@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 ### Added
-- Added the various Python modules on OSC Owens as Jupyter kernels.
+- Added the Python module on OSC Owens as a Jupyter kernel.
 - Added support to copy over tutorials/workshops to user's home directory.
 - Added button to connection panel to directly access tutorial directory.
 

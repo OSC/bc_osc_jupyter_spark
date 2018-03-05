@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 
-<%- avail_cores = context.node_type.include?("hugemem") ? 48   : 28  -%>
-<%- avail_mem   = context.node_type.include?("hugemem") ? 1528 : 120 -%>
-<%- num_workers = context.num_workers.to_i -%>
-
 <%-
+  avail_cores = context.node_type.include?("hugemem") ? 48   : 28
+  avail_mem   = context.node_type.include?("hugemem") ? 1528 : 120
+  num_workers = context.num_workers.to_i
+
   spark_config = {
     "spark.ui.reverseProxy" => "true",
     #"spark.ui.reverseProxyUrl" => "https://ondemand.osc.edu/node/${SPARK_MASTER_HOST}/${SPARK_MASTER_WEBUI_PORT}",
@@ -178,6 +178,7 @@ chmod 700 "${PYTHON_WRAPPER_FILE}"
 export JUPYTER_PATH="${PWD}/jupyter"
 export KERNEL_PATH="${JUPYTER_PATH}/kernels/pyspark"
 mkdir -p "${KERNEL_PATH}"
+cp "${PWD}/assets/python"/* "${KERNEL_PATH}"
 (
 umask 077
 sed 's/^ \{2\}//' > "${KERNEL_PATH}/kernel.json" << EOL
@@ -195,11 +196,14 @@ sed 's/^ \{2\}//' > "${KERNEL_PATH}/kernel.json" << EOL
 EOL
 )
 
+# List available kernels for debugging purposes
+set -x
+jupyter kernelspec list
+{ set +x; } 2>/dev/null
+
 # Set working directory to notebook root directory
 cd "${NOTEBOOK_ROOT}"
-cd /
 
 # Launch Jupyter Notebook interface to Spark
-echo "Launching Jupyter..."
 set -x
 /usr/local/anaconda-notebook/bin/jupyter notebook --config="${CONFIG_FILE}"
