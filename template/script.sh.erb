@@ -196,14 +196,22 @@ sed 's/^ \{2\}//' > "${KERNEL_PATH}/kernel.json" << EOL
 EOL
 )
 
-# List available kernels for debugging purposes
+# Output debug information
 set -x
-jupyter kernelspec list
+module list
 { set +x; } 2>/dev/null
 
 # Set working directory to notebook root directory
 cd "${NOTEBOOK_ROOT}"
 
+# Setup Jupyter Notebook environment
+export PATH="/usr/local/anaconda-notebook/bin:${PATH}"
+
+# List available kernels for debugging purposes
+set -x
+jupyter kernelspec list
+{ set +x; } 2>/dev/null
+
 # Launch Jupyter Notebook interface to Spark
 set -x
-/usr/local/anaconda-notebook/bin/jupyter notebook --config="${CONFIG_FILE}"
+jupyter notebook --config="${CONFIG_FILE}"
