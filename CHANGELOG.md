@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Added button to connection panel to directly access tutorial directory.
 
 ### Changed
+- Updated date in `LICENSE.txt`.
 - Renamed Account to Project.
 - Changed the way we launch Jupyter notebook by now pointing to a custom
   location for the Jupyter notebook installation.

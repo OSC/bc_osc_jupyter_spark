@@ -1,7 +1,7 @@
 # Batch Connect - OSC Jupyter Notebook + Spark
 
 ![GitHub Release](https://img.shields.io/github/release/osc/bc_osc_jupyter_spark.svg)
-![GitHub License](https://img.shields.io/github/license/osc/bc_osc_jupyter_spark.svg)
+[![GitHub License](https://img.shields.io/badge/license-MIT-green.svg)](https://opensource.org/licenses/MIT)
 
 An interactive app designed for OSC OnDemand that launches a Jupyter Notebook
 server and an Apache Spark cluster within an Owens batch job.
@@ -12,22 +12,18 @@ This Batch Connect app requires the following software be installed on the
 **compute nodes** that the batch job is intended to run on (**NOT** the
 OnDemand node):
 
-- [Jupyter Notebook](http://jupyter.readthedocs.io/en/latest/) 4.2.3+ (earlier
-  versions are untested but may work for you)
-- [OpenSSL](https://www.openssl.org/) 1.0.1+ (used to hash the Jupyter Notebook
-  server password)
-- [Apache Spark](https://spark.apache.org/) 2.1.0+
+- [Lmod] 6.0.1+ or any other `module purge` and `module load <modules>` based
+  CLI used to load appropriate environments within the batch job before
+  launching the Jupyter Notebook server.
+- [Jupyter Notebook] 4.2.3+ (earlier versions are untested but may work for
+  you)
+- [OpenSSL] 1.0.1+ (used to hash the Jupyter Notebook server password)
+- [Apache Spark] 2.1.0+
 
-**Optional** software:
-
-- [Anaconda](https://www.anaconda.com/distribution/) 4.3.13+ and its
-  [Jupyter Notebook extensions](https://docs.anaconda.com/anaconda/user-guide/tasks/use-jupyter-notebook-extensions)
-  that allow users to use conda environment-based kernels from the Jupyter
-  dashboard and the notebook's Kernel menu.
-- [Lmod](https://www.tacc.utexas.edu/research-development/tacc-projects/lmod)
-  6.0.1+ or any other `module restore` and `module load <modules>` based CLI
-  used to load appropriate environments within the batch job before launching
-  the Jupyter Notebook server.
+[Apache Spark]: https://spark.apache.org/
+[Jupyter Notebook]: https://jupyter.org/
+[OpenSSL]: https://www.openssl.org/
+[Lmod]: https://www.tacc.utexas.edu/research-development/tacc-projects/lmod
 
 ## Install
 
