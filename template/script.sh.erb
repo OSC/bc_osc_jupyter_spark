@@ -32,7 +32,7 @@ setup_env
 # Load the runtime environment
 runtime_env() {
   module purge
-  module load python/3.5 spark/2.1.0
+  module load python/3.6 spark/2.3.0
 
   # Disable randomized hash for string in Python 3.3+
   export PYTHONHASHSEED=0
@@ -155,8 +155,8 @@ sed 's/^ \{2\}//' > "${PYTHON_WRAPPER_FILE}" << EOL
   runtime_env
 
   # Setup PySpark
-  export PYTHONPATH="\${SPARK_HOME}/python/:\$PYTHONPATH"
-  export PYTHONPATH="\${SPARK_HOME}/python/lib/py4j-0.10.4-src.zip:\$PYTHONPATH"
+  export PYTHONPATH="\${SPARK_HOME}/python:\$PYTHONPATH"
+  export PYTHONPATH="\${SPARK_HOME}/python/lib/py4j-0.10.6-src.zip:\$PYTHONPATH"
   export PYTHONSTARTUP="\${SPARK_HOME}/python/pyspark/shell.py"
   export PYSPARK_SUBMIT_ARGS=" \\
     --master spark://${SPARK_MASTER_HOST}:${SPARK_MASTER_PORT} \\
