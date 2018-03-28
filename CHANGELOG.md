@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [Unreleased]
 ### Changed
 - Changed system Python module from `python/3.5` to `python/3.6`.
+- Use custom Jupyter Notebook module provided by SciApps.
 
 ## [0.1.0] - 2018-03-06
 ### Added
