@@ -172,7 +172,7 @@ EOL
 chmod 700 "${PYTHON_WRAPPER_FILE}"
 
 # Create Jupyter kernels
-export JUPYTER_PATH="${PWD}/jupyter"
+export JUPYTER_PATH="${PWD}/share/jupyter"
 export KERNEL_PATH="${JUPYTER_PATH}/kernels/pyspark"
 mkdir -p "${KERNEL_PATH}"
 cp "${PWD}/assets/python"/* "${KERNEL_PATH}"
