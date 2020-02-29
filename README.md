@@ -63,5 +63,5 @@ Again, you do not need to restart the app as it isn't a Passenger app.
 * Documentation, website content, and logo is licensed under
   [CC-BY-4.0](https://creativecommons.org/licenses/by/4.0/)
 * Code is licensed under MIT (see LICENSE.txt)
-* "Jupyter" is a trademark of the NumFOCUS foundation, of which Project Jupyter is a part.
+* The Jupyter logo is a trademark of NumFOCUS foundation.
 * Apache Spark, Spark and the Spark logo are trademarks of the Apache Software Foundation (ASF).
