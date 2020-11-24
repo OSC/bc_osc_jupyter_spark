@@ -5,6 +5,15 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+## [0.3.0] - 2020-11-24
+### Added
+- Added owens-slurm cluster to begin migrating owens to Slurm in
+  [10](https://github.com/OSC/bc_osc_jupyter_spark/pull/10).
+
+### Changed
+- Updated .gitlab-ci.yml for stability in cloning and to release to the
+  ci repo as well.
+
 ## [0.2.3] - 2019-09-15
 ### Changed
 - Updated where xalt is loaded
@@ -55,7 +64,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 - Initial release!
 
-[Unreleased]: https://github.com/OSC/bc_osc_jupyter_spark/compare/v0.2.3...HEAD
+[Unreleased]: https://github.com/OSC/bc_osc_jupyter_spark/compare/v0.3.0...HEAD
+[0.3.0]: https://github.com/OSC/bc_osc_jupyter_spark/compare/v0.2.3...v0.3.0
 [0.2.3]: https://github.com/OSC/bc_osc_jupyter_spark/compare/v0.2.2...v0.2.3
 [0.2.2]: https://github.com/OSC/bc_osc_jupyter_spark/compare/v0.2.1...v0.2.2
 [0.2.1]: https://github.com/OSC/bc_osc_jupyter_spark/compare/v0.2.0...v0.2.1
