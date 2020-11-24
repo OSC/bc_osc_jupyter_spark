@@ -1,5 +1,7 @@
 ---
-cluster: "owens"
+cluster:
+  - "owens"
+  - "owens-slurm"
 form:
   - bc_account
   - bc_num_hours
@@ -34,8 +36,8 @@ attributes:
         available RAM as well as 48 cores. There are 16 of these nodes on
         Owens.
     options:
-      - [ "any",     ":ppn=28"         ]
-      - [ "hugemem", ":ppn=48:hugemem" ]
+      - "any"
+      - "hugemem"
   only_driver_on_root:
     widget: "check_box"
     label: Only launch the driver on the master node.

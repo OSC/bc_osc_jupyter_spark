@@ -12,6 +12,14 @@ PASSWORD_SHA1="$(echo -n "${password}${SALT}" | openssl dgst -sha1 | awk '{print
 # Notebook root directory
 export NOTEBOOK_ROOT="${NOTEBOOK_ROOT:-${HOME}}"
 
+# older versions of Jupyter use XDG_RUNTIME_DIR, which Slurm sets, but we cannot use
+# because we don't have permission to modify /user/run/$(id -u).
+# newer versions (which the regular app uses and this should eventually
+# upgrade to) use XDG_DATA_HOME, which Slurm does not set (yet). So force
+# JUPYTER_RUNTIME_DIR (and JUPYTER_DATA_DIR) to what it would otherwise be.
+export JUPYTER_DATA_DIR="$HOME/.local/share/jupyter"
+export JUPYTER_RUNTIME_DIR="$JUPYTER_DATA_DIR/runtime"
+
 # The `$CONFIG_FILE` environment variable is exported as it is used in the main
 # `script.sh.erb` file when launching the Jupyter Notebook server.
 export CONFIG_FILE="${PWD}/config.py"
