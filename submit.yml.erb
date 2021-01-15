@@ -20,6 +20,7 @@ batch_connect:
   template: "basic"
   conn_params: [ "tutorials_root" ]
 script:
+  accounting_id: "<%= account %>"
   native:
   <%- slurm_args.each do |arg| %>
     - "<%= arg %>"

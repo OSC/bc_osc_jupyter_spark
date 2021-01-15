@@ -1,8 +1,13 @@
+<%-
+  groups = OodSupport::User.new.groups.sort_by(&:id).tap { |groups|
+    groups.unshift(groups.delete(OodSupport::Process.group))
+  }.map(&:name).grep(/^P./)
+-%>
 ---
 cluster:
   - "owens"
 form:
-  - bc_account
+  - account
   - bc_num_hours
   - bc_num_slots
   - node_type
@@ -11,9 +16,13 @@ form:
   - include_tutorials
   - bc_email_on_started
 attributes:
-  bc_account:
+  account:
     label: "Project"
-    help: "You can leave this blank if **not** in multiple projects."
+    widget: select
+    options:
+      <%- groups.each do |group| %>
+      - "<%= group %>"
+      <%- end %>
   num_workers:
     widget: "number_field"
     value: "1"
