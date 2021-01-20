@@ -1,5 +1,4 @@
 <%-
-  torque_cluster = OodAppkit.clusters[cluster].job_config[:adapter] == 'torque'
 
   base_slurm_args = if bc_num_slots.blank?
                       ["--nodes", "1", "--exclusive"]
@@ -15,25 +14,14 @@
                   base_slurm_args
                 end
 
-  torque_args =  case node_type
-                when "hugemem"
-                  ":ppn=48:hugemem"
-                else
-                  ":ppn=28"
-                end
-
 -%>
 ---
 batch_connect:
   template: "basic"
   conn_params: [ "tutorials_root" ]
 script:
+  accounting_id: "<%= account %>"
   native:
-  <%- if torque_cluster %>
-    resources:
-      nodes: "<%= bc_num_slots.blank? ? "1" : bc_num_slots.to_i %><%= torque_args %>"
-  <% else %>
   <%- slurm_args.each do |arg| %>
     - "<%= arg %>"
-  <%- end %>
   <%- end %>
