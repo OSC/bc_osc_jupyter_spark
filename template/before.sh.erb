@@ -83,7 +83,7 @@ module purge
 # Load the runtime environment
 runtime_env() {
   module purge
-  module load xalt/latest python/3.6 spark/2.3.0
+  module load xalt/latest python/3.6 spark/<%= context.spark_version %>
 
   # Disable randomized hash for string in Python 3.3+
   export PYTHONHASHSEED=0
