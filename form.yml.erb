@@ -9,6 +9,7 @@ cluster:
 form:
   - account
   - jupyterlab_switch
+  - spark_version
   - bc_num_hours
   - bc_num_slots
   - node_type
@@ -62,6 +63,11 @@ attributes:
     label: "Use JupyterLab instead of Jupyter Notebook?"
     help: |
       JupyterLab is the next generation of Jupyter, and is completely compatible with existing Jupyter Notebooks.
+  spark_version:
+    widget: "select"
+    options:
+      - "2.3.0"
+      - "3.0.1"
   version:
     widget: "select"
     label: "JupyterLab Version"
