@@ -5,6 +5,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+## [0.5.0] - 2021-02-09
+### Added
+- added choice for spark version in [14](https://github.com/OSC/bc_osc_jupyter_spark/pull/14)
+- added a toggle for jupyterlab and jupyter in [13](https://github.com/OSC/bc_osc_jupyter_spark/pull/13)
+
 ## [0.4.0] - 2021-01-20
 ### Changed
 - in [12](https://github.com/OSC/bc_osc_jupyter_spark/pull/12):
@@ -76,7 +81,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 - Initial release!
 
-[Unreleased]: https://github.com/OSC/bc_osc_jupyter_spark/compare/v0.4.0...HEAD
+[Unreleased]: https://github.com/OSC/bc_osc_jupyter_spark/compare/v0.5.0...HEAD
+[0.4.0]: https://github.com/OSC/bc_osc_jupyter_spark/compare/v0.4.0...v0.5.0
 [0.4.0]: https://github.com/OSC/bc_osc_jupyter_spark/compare/v0.3.1...v0.4.0
 [0.3.1]: https://github.com/OSC/bc_osc_jupyter_spark/compare/v0.3.0...v0.3.1
 [0.3.0]: https://github.com/OSC/bc_osc_jupyter_spark/compare/v0.2.3...v0.3.0
