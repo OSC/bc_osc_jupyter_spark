@@ -5,6 +5,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+## [0.6.0] - 2021-08-13
+
+### Changed
+
+- [15](https://github.com/OSC/bc_osc_jupyter_spark/pull/15) changed the versions of supported
+  jupyter versions and dropped support for 0.35 for security updates.
+
 ## [0.5.1] - 2021-02-09
 ### Changed
 - Use a different version of py4j based off of the spark version in
