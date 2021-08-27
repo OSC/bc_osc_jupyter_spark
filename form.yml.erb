@@ -6,6 +6,7 @@
 ---
 cluster:
   - "owens"
+  - "pitzer"
 form:
   - account
   - jupyterlab_switch
@@ -41,11 +42,11 @@ attributes:
     widget: select
     label: "Node type"
     help: |
-      - **any** - (*28 cores*) Use any available Owens node. This reduces the
+      - **any** - (*28 cores Owens*, *40 cores Pitzer*) Use any available Owens or Pitzer node. This reduces the
         wait time as there are no node requirements.
-      - **hugemem** - (*48 cores*) Use an Owens node that has 1.5TB of
-        available RAM as well as 48 cores. There are 16 of these nodes on
-        Owens.
+      - **hugemem** - (*48 cores Owens*, *80 cores Pitzer*) Use an Owens node that has 1.5TB of
+        available RAM as well as 48 cores, or a Pitzer node that has 3TB of available RAM as well as 80 cores. 
+        There are 16 of these nodes on Owens and 4 on Pitzer.
     options:
       - "any"
       - "hugemem"
@@ -66,11 +67,13 @@ attributes:
   spark_version:
     widget: "select"
     options:
+      - "2.4.5"
       - "2.3.0"
       - "3.0.1"
   version:
     widget: "select"
     label: "JupyterLab Version"
     options:
+      - [ "3.0",  "app_jupyter/3.0.7" ]
       - [ "2.2",  "app_jupyter/2.2.10" ]
       - [ "1.2",  "app_jupyter/1.2.21" ]
