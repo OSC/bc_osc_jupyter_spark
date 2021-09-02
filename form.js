@@ -32,42 +32,19 @@ function toggle_options(element_name) {
     let data = option_element.data();
     let show = data["optionFor" + cluster];
 
-    if (cluster === "Owens") {
-      let pitzer_only_spark_version = '2.4.5';
-      option_element.prop('disabled', false);
-      // disabling spark version not on owens.
-      if (option.value == pitzer_only_spark_version) {
-        option_element.prop('selected', false);
-        option_element.prop('disabled', true);
-
-        // when de-selecting something, the default is to fallback to the very first
-        // option. But there's an edge case where you want to hide the very first option,
-        // and deselecting it does nothing.
-        if (option_element.next()) {
-          option_element.next().prop('selected', true);
-        }
+    if (show == false) {
+      option_element.prop('disabled', true);
+      // when de-selecting something, the default is to fallback to the very first
+      // option. But there's an edge case where you want to hide the very first option,
+      // and deselecting it does nothing.
+      if (option_element.next()) {
+        option_element.next().prop('selected', true);
       }
-    } 
-    
-    else if (cluster === "Pitzer") {
-      let owens_only_jupyter_app_version = 'app_jupyter/3.0.7';
-      let owens_only_spark_version2 = '2.3.0';
-      let owens_only_spark_version3 = '3.0.1';
-      option_element.prop('disabled', false);
-      // disabling spark and jupyter_app versions that are not on spitzer.
-      if (option.value === owens_only_spark_version3 
-        || option.value === owens_only_spark_version2 
-        || option.value === owens_only_jupyter_app_version) {
-        option_element.prop('selected', false);
-        option_element.prop('disabled', true)
-        // when de-selecting something, the default is to fallback to the very first
-        // option. But there's an edge case where you want to hide the very first option,
-        // and deselecting it does nothing.
-        if (option_element.next()){
-          option_element.next().prop('selected', true);
-        }
-      } 
     }
+    
+    else {
+      option_element.prop('disabled', false);
+    } 
   });
 }
 
