@@ -33,7 +33,7 @@ function toggle_options(element_name) {
     let show = data["optionFor" + cluster];
 
     if (show == false) {
-      option_element.prop('disabled', true);
+      option_element.prop('hidden', true);
       // when de-selecting something, the default is to fallback to the very first
       // option. But there's an edge case where you want to hide the very first option,
       // and deselecting it does nothing.
@@ -43,7 +43,7 @@ function toggle_options(element_name) {
     }
     
     else {
-      option_element.prop('disabled', false);
+      option_element.prop('hidden', false);
     } 
   });
 }
