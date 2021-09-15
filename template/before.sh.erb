@@ -223,7 +223,6 @@ sed 's/^ \{2\}//' > "${PYTHON_WRAPPER_FILE}" << EOL
 
   # Setup PySpark
   export PYTHONPATH="\${SPARK_HOME}/python:\$PYTHONPATH"
-  # export PYTHONPATH="\${SPARK_HOME}/python/lib/<%= py4j %>:\$PYTHONPATH"
   export PYTHONPATH="<%= py4j %>:\$PYTHONPATH"
   export PYTHONSTARTUP="\${SPARK_HOME}/python/pyspark/shell.py"
   export PYSPARK_SUBMIT_ARGS=" \\
