@@ -4,16 +4,6 @@
   num_workers = context.num_workers.to_i
   torque_cluster = OodAppkit.clusters[context.cluster].job_config[:adapter] == 'torque'
 
-  py4j =  case context.spark_version
-          when "2.3.0"
-            "py4j-0.10.6-src.zip"
-          when "3.0.1"
-            "py4j-0.10.9-src.zip"
-          # just in case we update spark_version without updating this!
-          else
-            "py4j-0.10.9-src.zip"
-          end
-
   spark_config = {
     "spark.ui.reverseProxy" => "true",
     #"spark.ui.reverseProxyUrl" => "https://ondemand.osc.edu/node/${SPARK_MASTER_HOST}/${SPARK_MASTER_WEBUI_PORT}",
@@ -223,7 +213,7 @@ sed 's/^ \{2\}//' > "${PYTHON_WRAPPER_FILE}" << EOL
 
   # Setup PySpark
   export PYTHONPATH="\${SPARK_HOME}/python:\$PYTHONPATH"
-  export PYTHONPATH="\${SPARK_HOME}/python/lib/<%= py4j %>:\$PYTHONPATH"
+  export PYTHONPATH="\${SPARK_PY4J_PATH}:\$PYTHONPATH"
   export PYTHONSTARTUP="\${SPARK_HOME}/python/pyspark/shell.py"
   export PYSPARK_SUBMIT_ARGS=" \\
     --master spark://${SPARK_MASTER_HOST}:${SPARK_MASTER_PORT} \\
