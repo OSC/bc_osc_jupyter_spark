@@ -5,6 +5,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+## [0.7.0] - 2021-12-15
+
+### Changed
+
+- Use OnDemand's dynamic javascript capability in [20](https://github.com/OSC/bc_osc_jupyter_spark/pull/20)
+
 ## [0.6.0] - 2021-08-13
 
 ### Changed
