@@ -15,6 +15,7 @@ form:
   - bc_num_slots
   - node_type
   - num_workers
+  - driver_memory
   - only_driver_on_root
   - include_tutorials
   - bc_email_on_started
@@ -58,6 +59,12 @@ attributes:
           data-max-num-workers-for-cluster-owens: 48,
           data-max-num-workers-for-cluster-pitzer: 80,
         ]
+  driver_memory:
+    widget: number_field
+    value: 2
+    min: 2
+    max: 16
+    help: Driver memory in Gigabytes.
   only_driver_on_root:
     widget: "check_box"
     label: Only launch the driver on the master node.

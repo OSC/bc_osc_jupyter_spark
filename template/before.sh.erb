@@ -1,8 +1,19 @@
 <%-
   avail_cores = context.node_type.include?("hugemem") ? 48   : 28
-  avail_mem   = context.node_type.include?("hugemem") ? 1528 : 120
   num_workers = context.num_workers.to_i
   torque_cluster = OodAppkit.clusters[context.cluster].job_config[:adapter] == 'torque'
+
+  avail_mem   = if context.cluster == 'pitzer'
+                  if node_type == "hugemem"
+                    1528
+                  elsif node_type == "largemem"
+                    1528
+                  else
+                    190
+                  end
+                else
+                  context.node_type == "hugemem" ? 1528 : 120
+                end
 
   spark_config = {
     "spark.ui.reverseProxy" => "true",
@@ -16,6 +27,18 @@
     # So we need to disable the ability to kill applications
     "spark.ui.killEnabled" => "false",
   }
+
+  def driver_memory
+    mem = context.only_driver_on_root == "1" ? avail_mem : context.driver_memory
+  end
+
+  def executor_memory
+    if context.only_driver_on_root == "1"
+      avail_mem / num_workers
+    else
+      (avail_mem / num_workers) - driver_memory
+    end
+  end
 -%>
 # Export the module function if it exists
 [[ $(type -t module) == "function" ]] && export -f module
@@ -127,7 +150,7 @@ export MASTER_LOG_FILE="${LOG_ROOT}/spark-master-${SPARK_MASTER_HOST}.out"
 # Launch master
 echo "Launching master on ${SPARK_MASTER_HOST}:${SPARK_MASTER_PORT}..."
 set -x
-"${SPARK_HOME}/bin"/spark-class "org.apache.spark.deploy.master.Master" \
+"${SPARK_HOME}/bin/spark-class" "org.apache.spark.deploy.master.Master" \
     --properties-file "${SPARK_CONFIG_FILE}" \
   &> "${MASTER_LOG_FILE}" &
 )
@@ -217,8 +240,8 @@ sed 's/^ \{2\}//' > "${PYTHON_WRAPPER_FILE}" << EOL
   export PYTHONSTARTUP="\${SPARK_HOME}/python/pyspark/shell.py"
   export PYSPARK_SUBMIT_ARGS=" \\
     --master spark://${SPARK_MASTER_HOST}:${SPARK_MASTER_PORT} \\
-    --driver-memory <%= context.only_driver_on_root == "1" ? avail_mem : 2 %>G \\
-    --executor-memory <%= avail_mem / num_workers %>G \\
+    --driver-memory <%= driver_memory %>G \\
+    --executor-memory <%= executor_memory %>G \\
     --conf spark.driver.maxResultSize=0 \\
     --properties-file \"${SPARK_CONFIG_FILE}\" \\
     pyspark-shell \\
