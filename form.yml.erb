@@ -44,7 +44,7 @@ attributes:
     help: |
       - **any** - (*28 cores Owens*, *40 cores Pitzer*) Use any available Owens or Pitzer node. This reduces the
         wait time as there are no node requirements.
-      - **hugemem** - (*48 cores Owens*, *80 cores Pitzer*) Use an Owens node that has 1.5TB of
+      - **hugemem** - (*4-48 cores Owens*, *20-80 cores Pitzer*) Use an Owens node that has 1.5TB of
         available RAM as well as 48 cores, or a Pitzer node that has 3TB of available RAM as well as 80 cores. 
         There are 16 of these nodes on Owens and 4 on Pitzer.
     options:
@@ -55,7 +55,9 @@ attributes:
         ]
       - [ 
           "hugemem", "hugemem", 
+          data-min-num-workers-for-cluster-owens: 4,
           data-max-num-workers-for-cluster-owens: 48,
+          data-min-num-workers-for-cluster-pitzer: 20,
           data-max-num-workers-for-cluster-pitzer: 80,
         ]
   only_driver_on_root:
