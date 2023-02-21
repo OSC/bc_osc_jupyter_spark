@@ -15,6 +15,7 @@ form:
   - bc_num_slots
   - node_type
   - num_workers
+  - spark_configuration_file
   - only_driver_on_root
   - include_tutorials
   - bc_email_on_started
@@ -60,6 +61,8 @@ attributes:
           data-min-num-workers-for-cluster-pitzer: 20,
           data-max-num-workers-for-cluster-pitzer: 80,
         ]
+  spark_configuration_file:
+    help: Override defaults with a new configuration file. Leave blank to use defaults.
   only_driver_on_root:
     widget: "check_box"
     label: Only launch the driver on the master node.

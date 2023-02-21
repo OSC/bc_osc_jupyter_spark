@@ -4,6 +4,21 @@
   num_workers = context.num_workers.to_i
   torque_cluster = OodAppkit.clusters[context.cluster].job_config[:adapter] == 'torque'
 
+  def extra_spark_config
+    if context.spark_configuration_file.empty?
+      {}
+    else
+      {}.tap do |extra|
+        File.readlines(context.spark_configuration_file).each do |line|
+          key, value = line.split(' ')
+          extra[key] = value
+        end
+      rescue StandardError
+        {}
+      end.compact
+    end
+  end
+
   spark_config = {
     "spark.ui.reverseProxy" => "true",
     #"spark.ui.reverseProxyUrl" => "https://ondemand.osc.edu/node/${SPARK_MASTER_HOST}/${SPARK_MASTER_WEBUI_PORT}",
@@ -15,7 +30,7 @@
     "spark.ui.enabled" => "false",
     # So we need to disable the ability to kill applications
     "spark.ui.killEnabled" => "false",
-  }
+  }.merge(extra_spark_config)
 -%>
 # Export the module function if it exists
 [[ $(type -t module) == "function" ]] && export -f module
