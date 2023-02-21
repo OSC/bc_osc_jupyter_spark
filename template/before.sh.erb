@@ -46,7 +46,7 @@
 
   def pyspark_submit_args
     args = []
-    args.concat(["--executor-memory  #{avail_mem/num_workers}G"]) unless extra_spark_config.has_key?('spark.executor.memory')
+    args.concat(["--executor-memory  #{avail_mem/context.num_workers.to_i}G"]) unless extra_spark_config.has_key?('spark.executor.memory')
     args.concat(['--conf spark.driver.maxResultSize=0']) unless extra_spark_config.has_key?("spark.driver.maxResultSize")
 
     if extra_spark_config.has_key?('spark.driver.memory')
