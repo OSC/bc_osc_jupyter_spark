@@ -1,7 +1,20 @@
 <%-
-  avail_mem   = context.node_type.include?("hugemem") ? 1528 : 120
   num_workers = context.num_workers.to_i
   torque_cluster = OodAppkit.clusters[context.cluster].job_config[:adapter] == 'torque'
+
+  def avail_mem
+    if context.cluster == 'pitzer'
+      if context.node_type == 'hugemem'
+        1492
+      elsif context.node_type == 'largemem'
+        760
+      else
+        184
+      end
+    else
+      context.node_type == "hugemem" ? 1492 : 120
+    end
+  end
 
   def extra_spark_config
     if context.spark_configuration_file.empty?
@@ -30,6 +43,20 @@
     # So we need to disable the ability to kill applications
     "spark.ui.killEnabled" => "false",
   }.merge(extra_spark_config)
+
+  def pyspark_submit_args
+    args = []
+    args.concat(["--executor-memory  #{avail_mem/num_workers}G"]) unless extra_spark_config.has_key?('spark.executor.memory')
+    args.concat(['--conf spark.driver.maxResultSize=0']) unless extra_spark_config.has_key?("spark.driver.maxResultSize")
+
+    if extra_spark_config.has_key?('spark.driver.memory')
+      args.concat(["--driver-memory #{extra_spark_config['spark.driver.memory']}"])
+    else
+      args.concat(["--driver-memory #{context.only_driver_on_root == "1" ? avail_mem : 2}G"])
+    end
+
+    args
+  end
 -%>
 # Export the module function if it exists
 [[ $(type -t module) == "function" ]] && export -f module
@@ -232,10 +259,10 @@ sed 's/^ \{2\}//' > "${PYTHON_WRAPPER_FILE}" << EOL
   export PYTHONSTARTUP="\${SPARK_HOME}/python/pyspark/shell.py"
   export PYSPARK_SUBMIT_ARGS=" \\
     --master spark://${SPARK_MASTER_HOST}:${SPARK_MASTER_PORT} \\
-    --driver-memory <%= context.only_driver_on_root == "1" ? avail_mem : 2 %>G \\
-    --executor-memory <%= avail_mem / num_workers %>G \\
-    --conf spark.driver.maxResultSize=0 \\
     --properties-file \"${SPARK_CONFIG_FILE}\" \\
+    <%- pyspark_submit_args.each do |arg| -%>
+    <%= arg %> \\
+    <%- end -%>
     pyspark-shell \\
   "
 
