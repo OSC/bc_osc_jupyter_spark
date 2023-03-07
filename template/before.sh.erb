@@ -1,6 +1,6 @@
 <%-
   num_workers = context.num_workers.to_i
-  torque_cluster = OodAppkit.clusters[context.cluster].job_config[:adapter] == 'torque'
+  total_tasks = num_workers * context.bc_num_slots.to_i
 
   def avail_mem
     if context.cluster == 'pitzer'
@@ -211,10 +211,10 @@ sed 's/^ \{2\}//' > "${SPARK_WORKER_SCRIPT}" << EOL
   export SPARK_WORKER_DIR="${PWD}/work"
   export SPARK_WORKER_CORES=$(($(nproc)/<%= num_workers %>))
 
-  export WORKER_LOG_FILE="${LOG_ROOT}/spark-worker-\${SPARK_WORKER_HOST}-\${1}.out"
+  export WORKER_LOG_FILE="${LOG_ROOT}/spark-worker-\${SPARK_WORKER_HOST}-\${SLURM_TASK_PID}.out"
 
   # Launch worker
-  echo "Launching worker #\${1} on \${SPARK_WORKER_HOST}:\${SPARK_WORKER_PORT}..."
+  echo "Launching worker \${SLURM_TASK_PID} on \${SPARK_WORKER_HOST}:\${SPARK_WORKER_PORT}..."
   set -x
   "\${SPARK_HOME}/bin"/spark-class "org.apache.spark.deploy.worker.Worker" \\
       --properties-file "${SPARK_CONFIG_FILE}" \\
@@ -226,13 +226,7 @@ chmod 700 "${SPARK_WORKER_SCRIPT}"
 
 # Launch workers
 echo "Launching workers..."
-<%- if torque_cluster %>
-for ((i=0; i<<%= num_workers %>; i++)); do
-  pbsdsh -u -- "${SPARK_WORKER_SCRIPT}" ${i} &
-done
-<%- else -%>
-srun --export ALL --ntasks <%= num_workers %> "${SPARK_WORKER_SCRIPT}" &
-<%- end -%>
+srun --export ALL --ntasks <%= total_tasks %> "${SPARK_WORKER_SCRIPT}" &
 
 #
 # Launch Jupyter with PySpark
