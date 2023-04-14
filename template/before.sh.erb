@@ -31,6 +31,11 @@
     end
   end
 
+  def exec_memory
+    calculated = avail_mem/context.num_workers.to_i
+    [20, calculated].min
+  end
+
   spark_config = {
     "spark.ui.reverseProxy" => "true",
     #"spark.ui.reverseProxyUrl" => "https://ondemand.osc.edu/node/${SPARK_MASTER_HOST}/${SPARK_MASTER_WEBUI_PORT}",
@@ -46,7 +51,7 @@
 
   def pyspark_submit_args
     args = []
-    args.concat(["--executor-memory  #{avail_mem/context.num_workers.to_i}G"]) unless extra_spark_config.has_key?('spark.executor.memory')
+    args.concat(["--executor-memory  #{exec_memory}G"]) unless extra_spark_config.has_key?('spark.executor.memory')
     args.concat(['--conf spark.driver.maxResultSize=0']) unless extra_spark_config.has_key?("spark.driver.maxResultSize")
 
     if extra_spark_config.has_key?('spark.driver.memory')
