@@ -38,13 +38,13 @@
 
   spark_config = {
     "spark.ui.reverseProxy" => "true",
-    #"spark.ui.reverseProxyUrl" => "https://ondemand.osc.edu/node/${SPARK_MASTER_HOST}/${SPARK_MASTER_WEBUI_PORT}",
+    "spark.ui.reverseProxyUrl" => "/rnode/${SPARK_MASTER_HOST}/${SPARK_MASTER_WEBUI_PORT}",
     "spark.authenticate" => "true",
     "spark.authenticate.secret" => "${SPARK_SECRET}",
     # Comment out below when reverse proxy and authentication are added
     # This still starts the Web UI on the master/worker procs, but disables it for
     # the Application driver
-    "spark.ui.enabled" => "false",
+    "spark.ui.enabled" => "true",
     # So we need to disable the ability to kill applications
     "spark.ui.killEnabled" => "false",
   }.merge(extra_spark_config)
@@ -147,6 +147,8 @@ mkdir "${LOG_ROOT}"
 export SPARK_MASTER_HOST=${host}
 export SPARK_MASTER_PORT=$(find_port ${SPARK_MASTER_HOST})
 export SPARK_MASTER_WEBUI_PORT=$(find_port ${SPARK_MASTER_HOST})
+export spark_master_webui_port=$SPARK_MASTER_WEBUI_PORT
+export spark_master_host=$SPARK_MASTER_HOST
 
 # Generate Spark secret
 SPARK_SECRET="$(create_passwd)"

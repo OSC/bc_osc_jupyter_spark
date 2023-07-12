@@ -6,13 +6,19 @@ Some helpful resources on using Apache Spark in a Jupyter notebook:
 - <a href="https://github.com/jadianes/spark-py-notebooks/blob/master/nb2-rdd-basics/nb2-rdd-basics.ipynb" target="_blank">RDD Basics</a>
 
 <div class="row">
-  <div class="col-xs-<%= tutorials_root.blank? ? "12" : "6" %>">
+  <div class="col-md-<%= tutorials_root.blank? ? "6" : "4" %>">
     <form action="/node/<%= host %>/<%= port %>/login" method="post" target="_blank">
       <input type="hidden" name="password" value="<%= password %>">
       <button class="btn btn-primary" type="submit" style="margin-top: 6px;">
         <i class="fa fa-cogs"></i> Connect to Jupyter
       </button>
     </form>
+  </div>
+
+  <div class="col-md-<%= tutorials_root.blank? ? "6" : "4" %>">
+    <a class="btn btn-primary" target="_blank" href="/rnode/<%= spark_master_host %>/<%= spark_master_webui_port %>">
+      <i class="fa fa-star"></i> Connect to Spark
+    </a>
   </div>
   <%- unless tutorials_root.blank? -%>
   <div class="ml-3 col-xs-6">

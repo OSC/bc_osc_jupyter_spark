@@ -21,7 +21,10 @@
 ---
 batch_connect:
   template: "basic"
-  conn_params: [ "tutorials_root" ]
+  conn_params:
+    - "tutorials_root"
+    - "spark_master_webui_port"
+    - "spark_master_host"
 script:
   accounting_id: "<%= account %>"
   native:
