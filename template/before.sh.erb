@@ -31,23 +31,29 @@
     end
   end
 
+  def spark_ui_config
+    if context.spark_version >= '3.4.1'
+      {
+        "spark.ui.reverseProxy" => "true",
+        "spark.ui.reverseProxyUrl" => "/rnode/${SPARK_MASTER_HOST}/${SPARK_MASTER_WEBUI_PORT}",
+        "spark.ui.enabled" => "true",
+        "spark.ui.killEnabled" => "false",
+        "spark.ui.filters" => "edu.osc.spark.AuthFilter",
+      }
+    else
+      {}
+    end
+  end
+
   def exec_memory
     calculated = avail_mem/context.num_workers.to_i
     [60, calculated].min
   end
 
   spark_config = {
-    "spark.ui.reverseProxy" => "true",
-    "spark.ui.reverseProxyUrl" => "/rnode/${SPARK_MASTER_HOST}/${SPARK_MASTER_WEBUI_PORT}",
     "spark.authenticate" => "true",
     "spark.authenticate.secret" => "${SPARK_SECRET}",
-    # Comment out below when reverse proxy and authentication are added
-    # This still starts the Web UI on the master/worker procs, but disables it for
-    # the Application driver
-    "spark.ui.enabled" => "true",
-    # So we need to disable the ability to kill applications
-    "spark.ui.killEnabled" => "false",
-  }.merge(extra_spark_config)
+  }.merge(extra_spark_config).merge(spark_ui_config)
 
   def pyspark_submit_args
     args = []
@@ -73,6 +79,9 @@ port=$(find_port ${host})
 SALT="$(create_passwd 16)"
 password="$(create_passwd 16)"
 PASSWORD_SHA1="$(echo -n "${password}${SALT}" | openssl dgst -sha1 | awk '{print $NF}')"
+export SPARK_UI_AUTH_TOKEN=$(uuid)
+export spark_ui_auth_token=$SPARK_UI_AUTH_TOKEN
+export spark_version=<%= context.spark_version %>
 
 # Notebook root directory
 export NOTEBOOK_ROOT="${NOTEBOOK_ROOT:-${HOME}}"

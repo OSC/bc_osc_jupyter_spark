@@ -5,6 +5,17 @@ Some helpful resources on using Apache Spark in a Jupyter notebook:
   (some work is required to translate the Python 2 examples here to Python 3)
 - <a href="https://github.com/jadianes/spark-py-notebooks/blob/master/nb2-rdd-basics/nb2-rdd-basics.ipynb" target="_blank">RDD Basics</a>
 
+<script type="text/javascript">
+  (function () {
+    let date = new Date();
+    date.setTime(date.getTime() + (7*24*60*60*1000));
+    let expires = `expires="${date.toUTCString()}"`;
+    let cookiePath =  'path=/rnode/<%= spark_master_host %>/<%= spark_master_webui_port %>';
+    let cookie = `spark_ui_auth_token=<%= spark_ui_auth_token %>;${cookiePath};${expires};samesite=strict;secure;`;
+    document.cookie = cookie;
+  })();
+  </script>
+
 <div class="row">
   <div class="col-md-<%= tutorials_root.blank? ? "6" : "4" %>">
     <form action="/node/<%= host %>/<%= port %>/login" method="post" target="_blank">
@@ -15,11 +26,14 @@ Some helpful resources on using Apache Spark in a Jupyter notebook:
     </form>
   </div>
 
+  <%- if spark_version.to_s >= '3.4.1' -%>
   <div class="col-md-<%= tutorials_root.blank? ? "6" : "4" %>">
     <a class="btn btn-primary" target="_blank" href="/rnode/<%= spark_master_host %>/<%= spark_master_webui_port %>">
-      <i class="fa fa-star"></i> Connect to Spark
+      <i class="fa fa-star"></i> Connect to Spark WebUI
     </a>
   </div>
+  <%- end-%>
+
   <%- unless tutorials_root.blank? -%>
   <div class="ml-3 col-xs-6">
     <form action="/node/<%= host %>/<%= port %>/login?next=<%= url_encode "/node/#{host}/#{port}/tree#{tutorials_root}" %>" method="post" target="_blank" class="pull-right">
