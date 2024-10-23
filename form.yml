@@ -1,14 +1,9 @@
-<%-
-  groups = OodSupport::User.new.groups.sort_by(&:id).tap { |groups|
-    groups.unshift(groups.delete(OodSupport::Process.group))
-  }.map(&:name).grep(/^P./)
--%>
 ---
 cluster:
   - "owens"
   - "pitzer"
 form:
-  - account
+  - auto_accounts
   - jupyterlab_switch
   - spark_version
   - bc_num_hours
@@ -21,13 +16,6 @@ form:
   - bc_email_on_started
   - version
 attributes:
-  account:
-    label: "Project"
-    widget: select
-    options:
-      <%- groups.each do |group| %>
-      - "<%= group %>"
-      <%- end %>
   num_workers:
     widget: "number_field"
     value: "1"
