@@ -34,7 +34,11 @@ cd "${NOTEBOOK_ROOT}"
 echo "TTT - $(date)"
 
 # Setup Jupyter Notebook environment
+<%- if context.cluster == 'cardinal' -%>
+module load project/ondemand xalt/latest <%= context.version %>
+<%- else -%>
 module load ondemand/project xalt/latest <%= context.version %>
+<%- end -%>
 module list
 
 echo "TTT - $(date)"
