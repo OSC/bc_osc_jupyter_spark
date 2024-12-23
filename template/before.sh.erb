@@ -147,6 +147,7 @@ runtime_env() {
 
   # Disable randomized hash for string in Python 3.3+
   export PYTHONHASHSEED=0
+  export SPARK_PY4J_PATH=$(eval echo "$SPARK_HOME/python/lib/py4j-*.zip")
 }
 
 #
