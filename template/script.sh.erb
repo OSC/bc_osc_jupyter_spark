@@ -1,5 +1,13 @@
 #!/usr/bin/env bash
 
+<%-
+  subcommand =  if context.version.split('/')[1].to_s > '4.0' || context.jupyterlab_switch == "1"
+                  'lab'
+                else
+                  'notebook'
+                end
+-%>
+
 #
 # Start Jupyter Notebook server + Spark cluster
 #
@@ -34,7 +42,11 @@ cd "${NOTEBOOK_ROOT}"
 echo "TTT - $(date)"
 
 # Setup Jupyter Notebook environment
+<%- if context.cluster == 'cardinal' -%>
+module load project/ondemand xalt/latest <%= context.version %>
+<%- else -%>
 module load ondemand/project xalt/latest <%= context.version %>
+<%- end -%>
 module list
 
 echo "TTT - $(date)"
@@ -48,4 +60,4 @@ echo "TTT - $(date)"
 
 # Launch Jupyter Notebook interface to Spark
 set -x
-jupyter <%= context.jupyterlab_switch == "1" ? "lab" : "notebook" %> --config="${CONFIG_FILE}"
+jupyter <%= subcommand %> --config="${CONFIG_FILE}"
