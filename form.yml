@@ -3,6 +3,7 @@ cluster:
   - "owens"
   - "pitzer"
   - "cardinal"
+  - "ascend-nextgen"
 form:
   - auto_accounts
   - jupyterlab_switch
@@ -43,12 +44,14 @@ attributes:
           data-max-num-workers-for-cluster-owens: 28,
           data-max-num-workers-for-cluster-pitzer: 48,
           data-max-num-workers-for-cluster-cardinal: 48,
+          data-max-num-workers-for-cluster-ascend-nextgen: 118,
         ]
       - [ 
           "hugemem", "hugemem",
           data-max-num-workers-for-cluster-owens: 48,
           data-max-num-workers-for-cluster-pitzer: 80,
           data-option-for-cluster-cardinal: false,
+          data-option-for-cluster-ascend-nextgen: false,
         ]
   spark_configuration_file:
     help: Override defaults with a new configuration file. Leave blank to use defaults.
@@ -77,19 +80,23 @@ attributes:
       - [
           "3.4.1", "3.4.1",
           data-option-for-cluster-cardinal: false,
+          data-option-for-cluster-ascend-nextgen: false,
         ]
       - [
         "3.0.1", "3.0.1",
         data-option-for-cluster-cardinal: false,
+        data-option-for-cluster-ascend-nextgen: false,
         ]
       - [
         "2.4.5", "2.4.5",
         data-option-for-cluster-owens: false,
         data-option-for-cluster-cardinal: false,
+        data-option-for-cluster-ascend-nextgen: false,
         ]
       - [
         "2.3.0", "2.3.0",
-        data-option-for-cluster-pitzer: false
+        data-option-for-cluster-pitzer: false,
+        data-option-for-cluster-ascend-nextgen: false,
         ]
   version:
     widget: "select"
@@ -101,12 +108,15 @@ attributes:
       - [
         "3.0", "app_jupyter/3.0.17",
         data-option-for-cluster-cardinal: false,
+        data-option-for-cluster-ascend-nextgen: false,
         ]
       - [
         "2.2", "app_jupyter/2.2.10",
         data-option-for-cluster-cardinal: false,
+        data-option-for-cluster-ascend-nextgen: false,
         ]
       - [
         "1.2", "app_jupyter/1.2.21",
         data-option-for-cluster-cardinal: false,
+        data-option-for-cluster-ascend-nextgen: false,
         ]
