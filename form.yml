@@ -104,6 +104,7 @@ attributes:
     options:
       - [
         "4.1", "app_jupyter/4.1.5",
+        data-option-for-cluster-pitzer: false,
         ]
       - [
         "3.0", "app_jupyter/3.0.17",
