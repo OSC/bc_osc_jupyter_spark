@@ -250,6 +250,16 @@ chmod 700 "${SPARK_WORKER_SCRIPT}"
 echo "Launching workers..."
 srun --export ALL --ntasks <%= total_tasks %> "${SPARK_WORKER_SCRIPT}" &
 
+# Required to support a custom kernel
+export PYSPARK_SUBMIT_ARGS=" \
+    --master spark://${SPARK_MASTER_HOST}:${SPARK_MASTER_PORT} \
+    --properties-file \"${SPARK_CONFIG_FILE}\" \
+    <%- pyspark_submit_args.each do |arg| -%>
+    <%= arg %> \
+    <%- end -%>
+    pyspark-shell \
+"
+
 #
 # Launch Jupyter with PySpark
 #
@@ -273,14 +283,6 @@ sed 's/^ \{2\}//' > "${PYTHON_WRAPPER_FILE}" << EOL
   export PYTHONPATH="\${SPARK_HOME}/python:\$PYTHONPATH"
   export PYTHONPATH="\${SPARK_PY4J_PATH}:\$PYTHONPATH"
   export PYTHONSTARTUP="\${SPARK_HOME}/python/pyspark/shell.py"
-  export PYSPARK_SUBMIT_ARGS=" \\
-    --master spark://${SPARK_MASTER_HOST}:${SPARK_MASTER_PORT} \\
-    --properties-file \"${SPARK_CONFIG_FILE}\" \\
-    <%- pyspark_submit_args.each do |arg| -%>
-    <%= arg %> \\
-    <%- end -%>
-    pyspark-shell \\
-  "
 
   # Launch the original command
   set -x

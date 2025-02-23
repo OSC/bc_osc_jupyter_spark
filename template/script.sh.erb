@@ -47,6 +47,7 @@ module load project/ondemand xalt/latest <%= context.version %>
 <%- else -%>
 module load ondemand/project xalt/latest <%= context.version %>
 <%- end -%>
+module load spark/<%= context.spark_version %>
 module list
 
 echo "TTT - $(date)"
