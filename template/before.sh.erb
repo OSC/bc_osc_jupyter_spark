@@ -138,12 +138,7 @@ module purge
 # Load the runtime environment
 runtime_env() {
   module purge
-  module load xalt/latest
-  <%- unless ['cardinal', 'ascend-nextgen'].include?(context.cluster) -%>
-  module load python/3.6-conda5.2 spark/<%= context.spark_version %>
-  <%- else -%>
-  module load python/3.12 spark/<%= context.spark_version %>
-  <%- end -%>
+  module load spark/<%= context.spark_version %>
 
   # Disable randomized hash for string in Python 3.3+
   export PYTHONHASHSEED=0
