@@ -1,9 +1,8 @@
 ---
 cluster:
-  - "owens"
   - "pitzer"
   - "cardinal"
-  - "ascend-nextgen"
+  - "ascend"
 form:
   - auto_accounts
   - jupyterlab_switch
@@ -33,25 +32,20 @@ attributes:
     widget: select
     label: "Node type"
     help: |
-      - **any** - (*28 cores Owens*, *40 cores Pitzer*) Use any available Owens or Pitzer node. This reduces the
-        wait time as there are no node requirements.
-      - **hugemem** - (*4-48 cores Owens*, *20-80 cores Pitzer*) Use an Owens node that has 1.5TB of
-        available RAM as well as 48 cores, or a Pitzer node that has 3TB of available RAM as well as 80 cores. 
-        There are 16 of these nodes on Owens and 4 on Pitzer.
+      - **any** - Use any available node. This reduces the wait time as there are no node requirements.
+      - **hugemem** - Use a huge memory node. Huge memory nodes have much more RAM and cores than regular nodes.
     options:
       - [ 
           "any", "any",
-          data-max-num-workers-for-cluster-owens: 28,
           data-max-num-workers-for-cluster-pitzer: 48,
           data-max-num-workers-for-cluster-cardinal: 48,
-          data-max-num-workers-for-cluster-ascend-nextgen: 118,
+          data-max-num-workers-for-cluster-ascend: 118,
         ]
       - [ 
           "hugemem", "hugemem",
-          data-max-num-workers-for-cluster-owens: 48,
           data-max-num-workers-for-cluster-pitzer: 80,
           data-option-for-cluster-cardinal: false,
-          data-option-for-cluster-ascend-nextgen: false,
+          data-option-for-cluster-ascend: false,
         ]
   spark_configuration_file:
     help: Override defaults with a new configuration file. Leave blank to use defaults.
@@ -74,29 +68,27 @@ attributes:
     options:
       - [
           "3.5.1", "3.5.1",
-          data-option-for-cluster-owens: false,
           data-option-for-cluster-pitzer: false,
         ]
       - [
           "3.4.1", "3.4.1",
           data-option-for-cluster-cardinal: false,
-          data-option-for-cluster-ascend-nextgen: false,
+          data-option-for-cluster-ascend: false,
         ]
       - [
         "3.0.1", "3.0.1",
         data-option-for-cluster-cardinal: false,
-        data-option-for-cluster-ascend-nextgen: false,
+        data-option-for-cluster-ascend: false,
         ]
       - [
         "2.4.5", "2.4.5",
-        data-option-for-cluster-owens: false,
         data-option-for-cluster-cardinal: false,
-        data-option-for-cluster-ascend-nextgen: false,
+        data-option-for-cluster-ascend: false,
         ]
       - [
         "2.3.0", "2.3.0",
         data-option-for-cluster-pitzer: false,
-        data-option-for-cluster-ascend-nextgen: false,
+        data-option-for-cluster-ascend: false,
         ]
   version:
     widget: "select"
@@ -109,15 +101,15 @@ attributes:
       - [
         "3.0", "app_jupyter/3.0.17",
         data-option-for-cluster-cardinal: false,
-        data-option-for-cluster-ascend-nextgen: false,
+        data-option-for-cluster-ascend: false,
         ]
       - [
         "2.2", "app_jupyter/2.2.10",
         data-option-for-cluster-cardinal: false,
-        data-option-for-cluster-ascend-nextgen: false,
+        data-option-for-cluster-ascend: false,
         ]
       - [
         "1.2", "app_jupyter/1.2.21",
         data-option-for-cluster-cardinal: false,
-        data-option-for-cluster-ascend-nextgen: false,
+        data-option-for-cluster-ascend: false,
         ]
