@@ -1,8 +1,8 @@
 <%-
 
   cores_lookup = {
-                  "hugemem" => {"pitzer" => "80", "owens" => "48"},
-                  "any" => {"pitzer" => "40", "owens" => "28", "cardinal" => "48", "ascend-nextgen" => '118' }
+                  "hugemem" => {"pitzer" => "80"},
+                  "any" => {"pitzer" => "40", "cardinal" => "48", "ascend" => '118' }
                 }
 
   base_slurm_args = if bc_num_slots.blank?
