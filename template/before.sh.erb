@@ -138,7 +138,6 @@ module purge
 # Load the runtime environment
 runtime_env() {
   module purge
-  module load xalt/latest
   <%- unless ['cardinal', 'ascend'].include?(context.cluster) -%>
   module load python/3.6-conda5.2 spark/<%= context.spark_version %>
   <%- else -%>
