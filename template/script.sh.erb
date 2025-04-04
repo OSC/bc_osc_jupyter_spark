@@ -43,9 +43,9 @@ echo "TTT - $(date)"
 
 # Setup Jupyter Notebook environment
 <%- if ['cardinal', 'ascend'].include?(context.cluster) -%>
-module load project/ondemand xalt/latest <%= context.version %>
+module load project/ondemand <%= context.version %>
 <%- else -%>
-module load ondemand/project xalt/latest <%= context.version %>
+module load ondemand/project <%= context.version %>
 <%- end -%>
 module load spark/<%= context.spark_version %>
 module list
