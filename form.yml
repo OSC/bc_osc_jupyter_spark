@@ -7,6 +7,7 @@ form:
   - auto_accounts
   - jupyterlab_switch
   - spark_version
+  - python_version
   - bc_num_hours
   - bc_num_slots
   - node_type
@@ -89,6 +90,24 @@ attributes:
         "2.3.0", "2.3.0",
         data-option-for-cluster-pitzer: false,
         data-option-for-cluster-ascend: false,
+        ]
+  python_version:
+    widget: "select"
+    label: "Python Version"
+    help: |
+      Specify the Python version to match the one used in your Conda environment. This ensures compatibility when setting up the Spark cluster and helps prevent issues related to Python version mismatches. Choose Python 3.12 if you want to use the default PySpark kernel.
+    options:
+      - [
+          "3.12", "python/3.12",
+           data-option-for-cluster-pitzer: false,
+        ]
+      - [
+          "3.10", "miniconda3/24.1.2-py310",
+           data-option-for-cluster-pitzer: false,
+        ]
+      - [
+          "3.9", "",
+           data-option-for-cluster-pitzer: false,
         ]
   version:
     widget: "select"

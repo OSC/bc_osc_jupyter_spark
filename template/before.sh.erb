@@ -141,7 +141,7 @@ runtime_env() {
   <%- unless ['cardinal', 'ascend'].include?(context.cluster) -%>
   module load python/3.6-conda5.2 spark/<%= context.spark_version %>
   <%- else -%>
-  module load python/3.12 spark/<%= context.spark_version %>
+  module load <%= context.python_version %> spark/<%= context.spark_version %>
   <%- end -%>
 
   # Disable randomized hash for string in Python 3.3+
