@@ -7,6 +7,7 @@ form:
   - auto_accounts
   - jupyterlab_switch
   - spark_version
+  - auto_modules_python
   - bc_num_hours
   - bc_num_slots
   - node_type
@@ -17,6 +18,12 @@ form:
   - bc_email_on_started
   - version
 attributes:
+  auto_modules_python:
+    default: false
+    help: | 
+      Specify the Python version to match the one used in your Conda environment.
+      This ensures compatibility when setting up the Spark cluster and helps prevent issues related
+      to Python version mismatches.
   num_workers:
     widget: "number_field"
     value: "1"
