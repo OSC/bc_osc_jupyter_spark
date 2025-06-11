@@ -138,7 +138,7 @@ module purge
 # Load the runtime environment
 runtime_env() {
   module purge
-  <%- unless ['cardinal', 'ascend'].include?(context.cluster) -%>
+  <%- if context.cluster == 'pitzer' -%>
   module load python/3.6-conda5.2 spark/<%= context.spark_version %>
   <%- else -%>
   module load python/3.12 spark/<%= context.spark_version %>
