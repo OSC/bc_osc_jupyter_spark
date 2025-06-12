@@ -1,15 +1,6 @@
 <%-
 
-  cores_lookup = {
-                  "hugemem" => {"pitzer" => "80"},
-                  "any" => {"pitzer" => "40", "cardinal" => "48", "ascend" => '118' }
-                }
-
-  base_slurm_args = if bc_num_slots.blank?
-                      ["--nodes", "1", "--ntasks-per-node", cores_lookup[node_type][cluster] ]
-                    else
-                      ["--nodes", "#{bc_num_slots}", "--ntasks-per-node", cores_lookup[node_type][cluster] ]
-                    end
+  base_slurm_args = ["--nodes", "#{bc_num_slots}", "--exclusive" ]
 
   slurm_args =  case node_type
                 when "hugemem"
