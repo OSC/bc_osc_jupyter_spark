@@ -247,7 +247,7 @@ chmod 700 "${SPARK_WORKER_SCRIPT}"
 
 # Launch workers
 echo "Launching workers..."
-srun --export ALL --ntasks <%= total_tasks %> "${SPARK_WORKER_SCRIPT}" &
+srun --export ALL --ntasks <%= total_tasks %> --ntasks-per-node=<%= num_workers %> -N $SLURM_NNODES "${SPARK_WORKER_SCRIPT}" &
 
 # Required to support a custom kernel
 export PYSPARK_SUBMIT_ARGS=" \
