@@ -1,7 +1,6 @@
 ---
 cluster:
   - "pitzer"
-  - "pitzer-rhel9"
   - "cardinal"
   - "ascend"
 form:
@@ -48,14 +47,12 @@ attributes:
       - [ 
           "any", "any",
           data-max-num-workers-for-cluster-pitzer: 48,
-          data-max-num-workers-for-cluster-pitzer-rhel9: 48,
           data-max-num-workers-for-cluster-cardinal: 48,
           data-max-num-workers-for-cluster-ascend: 118,
         ]
       - [ 
           "hugemem", "hugemem",
           data-max-num-workers-for-cluster-pitzer: 80,
-          data-max-num-workers-for-cluster-pitzer-rhel9: 80,
           data-option-for-cluster-cardinal: false,
           data-option-for-cluster-ascend: false,
         ]
@@ -80,30 +77,29 @@ attributes:
     options:
       - [
           "3.5.1", "3.5.1",
-          data-option-for-cluster-pitzer: false,
         ]
       - [
           "3.4.1", "3.4.1",
           data-option-for-cluster-cardinal: false,
           data-option-for-cluster-ascend: false,
-          data-option-for-cluster-pitzer-rhel9: false,
+          data-option-for-cluster-pitzer: false,
         ]
       - [
           "3.0.1", "3.0.1",
           data-option-for-cluster-cardinal: false,
           data-option-for-cluster-ascend: false,
-          data-option-for-cluster-pitzer-rhel9: false,
+          data-option-for-cluster-pitzer: false,
         ]
       - [
           "2.4.5", "2.4.5",
           data-option-for-cluster-cardinal: false,
           data-option-for-cluster-ascend: false,
-          data-option-for-cluster-pitzer-rhel9: false,
+          data-option-for-cluster-pitzer: false,
         ]
       - [
           "2.3.0", "2.3.0",
           data-option-for-cluster-pitzer: false,
-          data-option-for-cluster-pitzer-rhel9: false,
+          data-option-for-cluster-pitzer: false,
           data-option-for-cluster-ascend: false,
         ]
   version:
@@ -112,23 +108,22 @@ attributes:
     options:
       - [
           "4.1", "app_jupyter/4.1.5",
-          data-option-for-cluster-pitzer: false,
         ]
       - [
           "3.0", "app_jupyter/3.0.17",
           data-option-for-cluster-cardinal: false,
           data-option-for-cluster-ascend: false,
-          data-option-for-cluster-pitzer-rhel9: false,
+          data-option-for-cluster-pitzer: false,
         ]
       - [
           "2.2", "app_jupyter/2.2.10",
           data-option-for-cluster-cardinal: false,
           data-option-for-cluster-ascend: false,
-          data-option-for-cluster-pitzer-rhel9: false,
+          data-option-for-cluster-pitzer: false,
         ]
       - [
           "1.2", "app_jupyter/1.2.21",
           data-option-for-cluster-cardinal: false,
           data-option-for-cluster-ascend: false,
-          data-option-for-cluster-pitzer-rhel9: false,
+          data-option-for-cluster-pitzer: false,
         ]
