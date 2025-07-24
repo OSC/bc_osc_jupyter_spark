@@ -42,11 +42,7 @@ cd "${NOTEBOOK_ROOT}"
 echo "TTT - $(date)"
 
 # Setup Jupyter Notebook environment
-<%- if ['cardinal', 'ascend', 'pitzer-rhel9'].include?(context.cluster) -%>
 module load project/ondemand <%= context.version %>
-<%- else -%>
-module load ondemand/project <%= context.version %>
-<%- end -%>
 module load spark/<%= context.spark_version %>
 module list
 
