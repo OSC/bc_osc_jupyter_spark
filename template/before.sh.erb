@@ -227,7 +227,7 @@ sed 's/^ \{2\}//' > "${SPARK_WORKER_SCRIPT}" << EOL
   export SPARK_WORKER_WEBUI_PORT=\$(find_port \${SPARK_WORKER_HOST})
   export SPARK_WORKER_DIR="${PWD}/work"
   export SPARK_WORKER_CORES=$(($(nproc)/<%= num_workers %>))
-  export SPARK_WORKER_MEMORY=$(($(cat /proc/self/limits | grep resident | awk '{print $5}')/1024/<%= num_workers %>))k
+  export SPARK_WORKER_MEMORY=$(($(cat /sys/fs/cgroup/system.slice/slurmstepd.scope/job_$SLURM_JOB_ID/memory.max)/1024/<%= num_workers %>))k
 
   export WORKER_LOG_FILE="${LOG_ROOT}/spark-worker-\${SPARK_WORKER_HOST}-\${SLURM_TASK_PID}.out"
 
