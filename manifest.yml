@@ -4,12 +4,14 @@ category: Interactive Apps
 subcategory: Servers
 role: batch_connect
 description: |
-  This app will launch a [Jupyter Notebook] server using [Python] as well as an
-  [Apache Spark] cluster on the [Cardinal cluster], [Ascend cluster] or [Pitzer cluster].
+  Launch a [Jupyter Notebook] server using [Python] as well as an
+  [Apache Spark] cluster on [Cardinal], [Ascend] or [Pitzer].
+  Check the [Changelog] for the recent updates.
 
   [Jupyter Notebook]: https://jupyter.org/
   [Python]: https://www.python.org/
   [Apache Spark]: https://spark.apache.org/
-  [Cardinal cluster]: https://www.osc.edu/resources/technical_support/supercomputers/cardinal
-  [Ascend cluster]: https://www.osc.edu/resources/technical_support/supercomputers/ascend
-  [Pitzer cluster]: https://www.osc.edu/resources/technical_support/supercomputers/pitzer
+  [Cardinal]: https://www.osc.edu/resources/technical_support/supercomputers/cardinal
+  [Ascend]: https://www.osc.edu/resources/technical_support/supercomputers/ascend
+  [Pitzer]: https://www.osc.edu/resources/technical_support/supercomputers/pitzer
+  [Changelog]: https://www.osc.edu/resources/technical_support/hpc_changelog?keys=jupyter+spark
