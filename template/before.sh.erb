@@ -48,7 +48,7 @@ avail_mem_in_kB() {
 
 exec_memory_in_kB() {
   # Aim to set one executor per worker with available worker memory minus 2G (driver memory)
-  echo $(( $(avail_mem_in_kB)/<%= num_workers %> - 2*1024*1024))
+  echo $(( $(avail_mem_in_kB)/<%= num_workers %> * 9 / 10 ))
 }
 
 default_pyspark_submit_args() {
