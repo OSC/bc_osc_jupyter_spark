@@ -2,20 +2,6 @@
   num_workers = context.num_workers.to_i
   total_tasks = num_workers * context.bc_num_slots.to_i
 
-  def avail_mem
-    if context.cluster == 'pitzer'
-      if context.node_type == 'hugemem'
-        1492
-      elsif context.node_type == 'largemem'
-        760
-      else
-        184
-      end
-    else
-      context.node_type == "hugemem" ? 1492 : 120
-    end
-  end
-
   def extra_spark_config
     if context.spark_configuration_file.empty?
       {}
@@ -45,30 +31,50 @@
     end
   end
 
-  def exec_memory
-    calculated = avail_mem/context.num_workers.to_i
-    [60, calculated].min
-  end
-
   spark_config = {
     "spark.authenticate" => "true",
     "spark.authenticate.secret" => "${SPARK_SECRET}",
   }.merge(extra_spark_config).merge(spark_ui_config)
 
-  def pyspark_submit_args
-    args = []
-    args.concat(["--executor-memory  #{exec_memory}G"]) unless extra_spark_config.has_key?('spark.executor.memory')
-    args.concat(['--conf spark.driver.maxResultSize=0']) unless extra_spark_config.has_key?("spark.driver.maxResultSize")
+  extra_executor_memory = extra_spark_config.has_key?('spark.executor.memory') ? "#{extra_spark_config['spark.executor.memory']}" : 0
+  extra_driver_memory = extra_spark_config.has_key?('spark.driver.memory') ? "#{extra_spark_config['spark.driver.memory']}" : 0
+  extra_driver_maxResultSize = extra_spark_config.has_key?('spark.driver.maxResultSize') ? "#{extra_spark_config['spark.driver.maxResultSize']}" : 0
 
-    if extra_spark_config.has_key?('spark.driver.memory')
-      args.concat(["--driver-memory #{extra_spark_config['spark.driver.memory']}"])
-    else
-      args.concat(["--driver-memory #{context.only_driver_on_root == "1" ? avail_mem : 2}G"])
-    end
-
-    args
-  end
 -%>
+
+avail_mem_in_kB() {
+  echo $(($(cat /sys/fs/cgroup/system.slice/slurmstepd.scope/job_$SLURM_JOB_ID/memory.max)/1024))
+}
+
+exec_memory_in_kB() {
+  # Aim to set one executor per worker with available worker memory minus 2G (driver memory)
+  echo $(( $(avail_mem_in_kB)/<%= num_workers %> * 9 / 10 ))
+}
+
+default_pyspark_submit_args() {
+  local args=()
+
+  if [[ "<%= extra_executor_memory %>" == "0" ]]; then
+    args+=("--executor-memory" "$(exec_memory_in_kB)k")
+  fi
+
+  if [[ "<%= extra_driver_maxResultSize %>" == "0" ]]; then
+    args+=("--conf" "spark.driver.maxResultSize=0")
+  fi
+
+  if [[ "<%= extra_driver_memory %>" == "0" ]]; then
+    driver_memory="2G"
+    if [[  "<%= context.only_driver_on_root %>" == "1" ]]; then
+      driver_memory="$(avail_mem_in_kB)k"
+    fi
+    args+=("--driver-memory" "${driver_memory}")
+  else
+    args+=("--driver-memory" "<%= extra_driver_memory %>")
+  fi
+
+  echo "${args[@]}"
+}
+
 # Export the module function if it exists
 [[ $(type -t module) == "function" ]] && export -f module
 
@@ -227,6 +233,7 @@ sed 's/^ \{2\}//' > "${SPARK_WORKER_SCRIPT}" << EOL
   export SPARK_WORKER_WEBUI_PORT=\$(find_port \${SPARK_WORKER_HOST})
   export SPARK_WORKER_DIR="${PWD}/work"
   export SPARK_WORKER_CORES=$(($(nproc)/<%= num_workers %>))
+  export SPARK_WORKER_MEMORY=$(($(avail_mem_in_kB)/<%= num_workers %>))k
 
   export WORKER_LOG_FILE="${LOG_ROOT}/spark-worker-\${SPARK_WORKER_HOST}-\${SLURM_TASK_PID}.out"
 
@@ -248,10 +255,8 @@ srun --export ALL --ntasks <%= total_tasks %> --ntasks-per-node=<%= num_workers 
 # Required to support a custom kernel
 export PYSPARK_SUBMIT_ARGS=" \
     --master spark://${SPARK_MASTER_HOST}:${SPARK_MASTER_PORT} \
+    $(default_pyspark_submit_args) \
     --properties-file \"${SPARK_CONFIG_FILE}\" \
-    <%- pyspark_submit_args.each do |arg| -%>
-    <%= arg %> \
-    <%- end -%>
     pyspark-shell \
 "
 
