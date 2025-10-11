@@ -90,7 +90,13 @@ export spark_ui_auth_token=$SPARK_UI_AUTH_TOKEN
 export spark_version=<%= context.spark_version %>
 
 # Notebook root directory
-export NOTEBOOK_ROOT="${NOTEBOOK_ROOT:-${HOME}}"
+working_dir="<%= Pathname.new(context.working_dir) %>"
+USER_SELECT_ROOT="${working_dir:-$HOME}"
+if [[ -r "$USER_SELECT_ROOT" ]]; then
+  export NOTEBOOK_ROOT="$USER_SELECT_ROOT"
+else
+  export NOTEBOOK_ROOT="$HOME"
+fi
 
 # older versions of Jupyter use XDG_RUNTIME_DIR, which Slurm sets, but we cannot use
 # because we don't have permission to modify /user/run/$(id -u).
@@ -179,6 +185,12 @@ cat > "${SPARK_CONFIG_FILE}" << EOL
 <%- end -%>
 EOL
 )
+
+# Load extra environment variables
+spark_env="<%= context.spark_environment_file %>"
+if [[ -f "$spark_env" ]]; then
+  . $spark_env
+fi
 
 # Launch Spark master process
 (

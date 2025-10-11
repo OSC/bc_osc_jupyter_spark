@@ -6,6 +6,7 @@ cluster:
 form:
   - auto_accounts
   - jupyterlab_switch
+  - working_dir
   - spark_version
   - auto_modules_python
   - bc_num_hours
@@ -13,6 +14,7 @@ form:
   - node_type
   - num_workers
   - spark_configuration_file
+  - spark_environment_file
   - only_driver_on_root
   - include_tutorials
   - bc_email_on_started
@@ -57,7 +59,17 @@ attributes:
           data-option-for-cluster-ascend: false,
         ]
   spark_configuration_file:
-    help: Override defaults with a new configuration file. Leave blank to use defaults.
+    widget: "path_selector"
+    label: "Spark Configuration File"
+    show_hidden: false
+    show_files: true
+    help: "Override defaults with a new configuration file. Leave blank to use defaults."
+  spark_environment_file:
+    widget: "path_selector"
+    label: "Spark Environment File"
+    show_hidden: false
+    show_files: true
+    help: "Load additional environment variables before starting the Spark cluster."
   only_driver_on_root:
     widget: "check_box"
     label: Only launch the driver on the master node.
@@ -72,6 +84,12 @@ attributes:
     label: "Use JupyterLab instead of Jupyter Notebook?"
     help: |
       JupyterLab is the next generation of Jupyter, and is completely compatible with existing Jupyter Notebooks.
+  working_dir:
+    widget: "path_selector"
+    label: "Root Directory"
+    show_hidden: false
+    show_files: false   # Only display directories
+    help: "Select your project directory; defaults to $HOME"
   spark_version:
     widget: "select"
     options:
