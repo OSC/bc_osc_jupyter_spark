@@ -7,7 +7,7 @@ form:
   - auto_accounts
   - jupyterlab_switch
   - working_dir
-  - spark_version
+  - auto_modules_spark
   - auto_modules_python
   - bc_num_hours
   - bc_num_slots
@@ -18,8 +18,13 @@ form:
   - only_driver_on_root
   - include_tutorials
   - bc_email_on_started
-  - version
+  - auto_modules_app_jupyter
 attributes:
+  auto_modules_spark:
+    default: false
+  auto_modules_app_jupyter:
+    label: "JupyterLab version"
+    default: false
   auto_modules_python:
     default: false
     help: | 
@@ -59,13 +64,13 @@ attributes:
         ]
   spark_configuration_file:
     widget: "path_selector"
-    label: "Spark Configuration File"
+    label: "Spark configuration file"
     show_hidden: false
     show_files: true
     help: "Override defaults with a new configuration file. Leave blank to use defaults."
   supplement_env_file:
     widget: "path_selector"
-    label: "Supplementary Environment Variables File"
+    label: "Supplementary environment variables file"
     show_hidden: false
     show_files: true
     help: "Load additional environment variables from a file before starting the Spark cluster."
@@ -89,16 +94,3 @@ attributes:
     show_hidden: false
     show_files: false   # Only display directories
     help: "Select your project directory; defaults to $HOME"
-  spark_version:
-    widget: "select"
-    options:
-      - [
-          "3.5.1", "3.5.1",
-        ]
-  version:
-    widget: "select"
-    label: "JupyterLab Version"
-    options:
-      - [
-          "4.1", "app_jupyter/4.1.5",
-        ]

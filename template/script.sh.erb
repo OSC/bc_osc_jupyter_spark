@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 <%-
-  subcommand =  if context.version.split('/')[1].to_s > '4.0' || context.jupyterlab_switch == "1"
+  subcommand =  if context.auto_modules_app_jupyter.split('/')[1].to_s > '4.0' || context.jupyterlab_switch == "1"
                   'lab'
                 else
                   'notebook'
@@ -42,8 +42,8 @@ cd "${NOTEBOOK_ROOT}"
 echo "TTT - $(date)"
 
 # Setup Jupyter Notebook environment
-module load project/ondemand <%= context.version %>
-module load spark/<%= context.spark_version %>
+module load project/ondemand <%= context.auto_modules_app_jupyter %>
+module load <%= context.auto_modules_spark %>
 module list
 
 echo "TTT - $(date)"
