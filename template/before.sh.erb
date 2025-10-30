@@ -186,8 +186,8 @@ cat > "${SPARK_CONFIG_FILE}" << EOL
 EOL
 )
 
-# Load extra environment variables
-spark_env="<%= context.spark_environment_file %>"
+# Load additional environment variables
+spark_env="<%= context.supplement_env_file %>"
 if [[ -f "$spark_env" ]]; then
   . $spark_env
 fi

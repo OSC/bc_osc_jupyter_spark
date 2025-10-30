@@ -14,7 +14,7 @@ form:
   - node_type
   - num_workers
   - spark_configuration_file
-  - spark_environment_file
+  - supplement_env_file
   - only_driver_on_root
   - include_tutorials
   - bc_email_on_started
@@ -64,12 +64,12 @@ attributes:
     show_hidden: false
     show_files: true
     help: "Override defaults with a new configuration file. Leave blank to use defaults."
-  spark_environment_file:
+  supplement_env_file:
     widget: "path_selector"
-    label: "Spark Environment File"
+    label: "Supplementary Environment Variables File"
     show_hidden: false
     show_files: true
-    help: "Load additional environment variables before starting the Spark cluster."
+    help: "Load additional environment variables from a file before starting the Spark cluster."
   only_driver_on_root:
     widget: "check_box"
     label: Only launch the driver on the master node.
