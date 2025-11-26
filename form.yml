@@ -6,18 +6,25 @@ cluster:
 form:
   - auto_accounts
   - jupyterlab_switch
-  - spark_version
+  - working_dir
+  - auto_modules_spark
   - auto_modules_python
   - bc_num_hours
   - bc_num_slots
   - node_type
   - num_workers
   - spark_configuration_file
+  - supplement_env_file
   - only_driver_on_root
   - include_tutorials
   - bc_email_on_started
-  - version
+  - auto_modules_app_jupyter
 attributes:
+  auto_modules_spark:
+    default: false
+  auto_modules_app_jupyter:
+    label: "JupyterLab version"
+    default: false
   auto_modules_python:
     default: false
     help: | 
@@ -30,10 +37,9 @@ attributes:
     widget: "number_field"
     value: "1"
     min: "1"
-    max: "28"
     label: "Number of workers per node"
     help: |
-      This describes how the cores and memory are divvied up on the node
+      This describes how the cores and memory are divided up on the node
       (*useful to reduce memory allocated for each worker*). Should be a
       multiple of the number of cores on the node you chose above. Do **NOT**
       exceed the number of cores on the node.
@@ -47,8 +53,8 @@ attributes:
       - [ 
           "any", "any",
           data-max-num-workers-for-cluster-pitzer: 48,
-          data-max-num-workers-for-cluster-cardinal: 48,
-          data-max-num-workers-for-cluster-ascend: 118,
+          data-max-num-workers-for-cluster-cardinal: 96,
+          data-max-num-workers-for-cluster-ascend: 120,
         ]
       - [ 
           "hugemem", "hugemem",
@@ -57,7 +63,17 @@ attributes:
           data-option-for-cluster-ascend: false,
         ]
   spark_configuration_file:
-    help: Override defaults with a new configuration file. Leave blank to use defaults.
+    widget: "path_selector"
+    label: "Spark configuration file"
+    show_hidden: false
+    show_files: true
+    help: "Override defaults with a new configuration file. Leave blank to use defaults."
+  supplement_env_file:
+    widget: "path_selector"
+    label: "Supplementary environment variables file"
+    show_hidden: false
+    show_files: true
+    help: "Load additional environment variables from a file before starting the Spark cluster."
   only_driver_on_root:
     widget: "check_box"
     label: Only launch the driver on the master node.
@@ -72,58 +88,9 @@ attributes:
     label: "Use JupyterLab instead of Jupyter Notebook?"
     help: |
       JupyterLab is the next generation of Jupyter, and is completely compatible with existing Jupyter Notebooks.
-  spark_version:
-    widget: "select"
-    options:
-      - [
-          "3.5.1", "3.5.1",
-        ]
-      - [
-          "3.4.1", "3.4.1",
-          data-option-for-cluster-cardinal: false,
-          data-option-for-cluster-ascend: false,
-          data-option-for-cluster-pitzer: false,
-        ]
-      - [
-          "3.0.1", "3.0.1",
-          data-option-for-cluster-cardinal: false,
-          data-option-for-cluster-ascend: false,
-          data-option-for-cluster-pitzer: false,
-        ]
-      - [
-          "2.4.5", "2.4.5",
-          data-option-for-cluster-cardinal: false,
-          data-option-for-cluster-ascend: false,
-          data-option-for-cluster-pitzer: false,
-        ]
-      - [
-          "2.3.0", "2.3.0",
-          data-option-for-cluster-pitzer: false,
-          data-option-for-cluster-pitzer: false,
-          data-option-for-cluster-ascend: false,
-        ]
-  version:
-    widget: "select"
-    label: "JupyterLab Version"
-    options:
-      - [
-          "4.1", "app_jupyter/4.1.5",
-        ]
-      - [
-          "3.0", "app_jupyter/3.0.17",
-          data-option-for-cluster-cardinal: false,
-          data-option-for-cluster-ascend: false,
-          data-option-for-cluster-pitzer: false,
-        ]
-      - [
-          "2.2", "app_jupyter/2.2.10",
-          data-option-for-cluster-cardinal: false,
-          data-option-for-cluster-ascend: false,
-          data-option-for-cluster-pitzer: false,
-        ]
-      - [
-          "1.2", "app_jupyter/1.2.21",
-          data-option-for-cluster-cardinal: false,
-          data-option-for-cluster-ascend: false,
-          data-option-for-cluster-pitzer: false,
-        ]
+  working_dir:
+    widget: "path_selector"
+    label: "Root Directory"
+    show_hidden: false
+    show_files: false   # Only display directories
+    help: "Select your project directory; defaults to $HOME"

@@ -18,7 +18,7 @@
   end
 
   def spark_ui_config
-    if context.spark_version >= '3.4.1'
+    if context.auto_modules_spark.split('/')[1].to_s >= '3.4.1'
       {
         "spark.ui.reverseProxy" => "true",
         "spark.ui.reverseProxyUrl" => "/rnode/${SPARK_MASTER_HOST}/${SPARK_MASTER_WEBUI_PORT}",
@@ -87,10 +87,16 @@ password="$(create_passwd 16)"
 PASSWORD_SHA1="$(echo -n "${password}${SALT}" | openssl dgst -sha1 | awk '{print $NF}')"
 export SPARK_UI_AUTH_TOKEN=$(uuid)
 export spark_ui_auth_token=$SPARK_UI_AUTH_TOKEN
-export spark_version=<%= context.spark_version %>
+export spark_version=<%= context.auto_modules_spark.split('/')[1] %>
 
 # Notebook root directory
-export NOTEBOOK_ROOT="${NOTEBOOK_ROOT:-${HOME}}"
+working_dir="<%= Pathname.new(context.working_dir) %>"
+USER_SELECT_ROOT="${working_dir:-$HOME}"
+if [[ -r "$USER_SELECT_ROOT" ]]; then
+  export NOTEBOOK_ROOT="$USER_SELECT_ROOT"
+else
+  export NOTEBOOK_ROOT="$HOME"
+fi
 
 # older versions of Jupyter use XDG_RUNTIME_DIR, which Slurm sets, but we cannot use
 # because we don't have permission to modify /user/run/$(id -u).
@@ -144,7 +150,7 @@ module purge
 # Load the runtime environment
 runtime_env() {
   module purge
-  module load <%= context.auto_modules_python %> spark/<%= context.spark_version %>
+  module load <%= context.auto_modules_python %> <%= context.auto_modules_spark %>
 
   # Disable randomized hash for string in Python 3.3+
   export PYTHONHASHSEED=0
@@ -179,6 +185,12 @@ cat > "${SPARK_CONFIG_FILE}" << EOL
 <%- end -%>
 EOL
 )
+
+# Load additional environment variables
+spark_env="<%= context.supplement_env_file %>"
+if [[ -f "$spark_env" ]]; then
+  . $spark_env
+fi
 
 # Launch Spark master process
 (
