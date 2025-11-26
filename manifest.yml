@@ -14,4 +14,4 @@ description: |
   [Cardinal]: https://www.osc.edu/resources/technical_support/supercomputers/cardinal
   [Ascend]: https://www.osc.edu/resources/technical_support/supercomputers/ascend
   [Pitzer]: https://www.osc.edu/resources/technical_support/supercomputers/pitzer
-  [Changelog]: https://www.osc.edu/resources/technical_support/hpc_changelog?keys=jupyter+spark
+  [Changelog]: https://github.com/OSC/bc_osc_jupyter_spark/releases

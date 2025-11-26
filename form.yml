@@ -39,7 +39,7 @@ attributes:
     min: "1"
     label: "Number of workers per node"
     help: |
-      This describes how the cores and memory are divvied up on the node
+      This describes how the cores and memory are divided up on the node
       (*useful to reduce memory allocated for each worker*). Should be a
       multiple of the number of cores on the node you chose above. Do **NOT**
       exceed the number of cores on the node.
