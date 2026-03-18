@@ -2,13 +2,10 @@
 
   base_slurm_args = ["--nodes", "#{bc_num_slots}", "--exclusive" ]
 
-  slurm_args =  case node_type
-                when "hugemem"
-                  partition = bc_num_slots.to_i > 1 ? "hugemem-parallel" : "hugemem"
-                  base_slurm_args + ["--partition", partition]
-                else
-                  base_slurm_args
-                end
+  # Remove cluster tag, e.g. pitzer-gpu-exp to gpu-exp
+  partition = global_node_type.split('-').drop(1).join('-')
+
+  slurm_args = base_slurm_args + ["--partition", partition]
 
 -%>
 ---
