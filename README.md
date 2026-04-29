@@ -132,7 +132,7 @@ If your site would like to add your name to our known deployments, please let us
 
 | Site | OOD Version | Scheduler | Status |
 |------|-------------|-----------|--------|
-| Ohio Supercomputer Center | ? | Slurm (version?) | Production |
+| Ohio Supercomputer Center | 4.1.4 | Slurm 25.05.4 | Production |
 
 ## Known Limitations
 
