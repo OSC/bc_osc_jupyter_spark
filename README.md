@@ -5,12 +5,12 @@
 ![GitHub Release](https://img.shields.io/github/release/osc/bc_osc_jupyter_spark.svg)
 [![GitHub License](https://img.shields.io/badge/license-MIT-green.svg)](https://opensource.org/licenses/MIT)
 
-Jupiter Notebook + Spark is an Open OnDemand Batch Connect app that launches a Jupyter Notebook server and an Apache Spark cluster as an interactive session on OSC HPC clusters. Jupyter provides free, open-standard web services for interactive computing across multiple programming languages. Spark is an open source cluster-computing framework.
+An [Open OnDemand](https://openondemand.org/) Batch Connect app that launches a [Jupyter]{https://jupyter.org/) Notebook (or Lab) server and an [Apache Spark](https://spark.apache.org) cluster as an interactive session on OSC HPC clusters. The app creates a PySpark kernel so users can run Spark jobs directly from Jupyter notebooks. Jupyter provides free, open-standard web services for interactive computing across multiple programming languages. Spark is an open source cluster-computing framework.
 
 This app uses the Batch Connect `basic` template with Slurm and supports
 clusters: Ascend, Pitzer, and Cardinal.
 
-- **Upstream project:** [Jupyter](https://jupyter.org/)
+- **Upstream project:** [Jupyter](https://jupyter.org/), [Apache Spark](https://spark.apache.org/)
 - **Batch Connect template:** `basic`
 - **Scheduler:** Slurm
 
@@ -20,12 +20,17 @@ clusters: Ascend, Pitzer, and Cardinal.
 ![Spark master running in browser](docs/bc_osc_jupyter_spark_spark.png)
 
 ## Features
-- Launches either Jupyter Lab or Jupyter Notebook (user-selectable checkbox)
+- Launches either Jupyter Lab or Jupyter Notebook (user-selectable checkbox) server with a built-in PySpark kernel connected to a Spark cluster
 - Multi-cluster support (Ascend, Pitzer, Cardinal)
-- Configurable cores, wall time, and node type (any or hugemem) via the launch form
-- Root directory selector for the Jupyter session
-- Spark configuration file selector
-- Supplementary environment variables file selector for before starting the Spark cluster
+- Multi-node Spark clusters with configurable worker count per node
+- Hugemem node type support for memory-intensive workloads
+- Custom Spark configuration file support (override defaults)
+- Supplementary environment variables file support
+- Option to restruct driver process to master node only (for large `.collect`/`.take` operations)
+- Optional access to OSC tutorial/workshop notebooks
+- Configurable root directory for the Jupyter session
+- Module-based software loading via Lmod`
+- Configurable cores, wall time, and node type via the launch form
 
 ## Requirements
 
@@ -49,26 +54,20 @@ OnDemand node):
 
 ### Open OnDemand
 
-- Open OnDemand <!-- TODO: Minimum version? -->
+- Tested to work with the latest version of Open OnDemand
 - Slurm Scheduler
 
 ## App Installation
 
-Please see the [References section](#software-installation) below for instructions on how to install the software that is launched by this App.
-
 ### 1. Clone the repository
 
 ```bash
-# Batch Connect / Passenger apps:
 cd /var/www/ood/apps/sys
-
-# Widgets / Dashboards — check OOD docs for the correct path
-
 git clone https://github.com/OSC/bc_osc_jupyter_spark.git
 cd bc_osc_jupyter_spark
 
 # Pin to a release (recommended)
-git checkout v0.13.0
+git checkout v0.16.0
 ```
 No restart is needed -- Batch Connect apps are not Passenger apps and are detected automatically.
 
@@ -79,29 +78,46 @@ Edit `form.yml` and update these values for your cluster:
 | Attribute | OSC Default | Change to |
 |-----------|---------|-----------|
 | `cluster` | `ascend`, `pitzer`, `cardinal` | Your cluster name(s) |
-| `node_type` | `OSC-specific node types` | Node types available on your cluster |
+| `auto_modules_spark` | auto-detected Spark modules | Spark modules on your system |
+| `auto_modules_python`    | auto-detected Python modules | Python modules on your system    |
+ | `auto_modules_app_jupyter` | auto-detected Jupyter modules | Jupyter modules on your system |
+| `node_type` | `any`, `hugemem` | Node types available on your cluster |
 
-### 3. Verify
+In `script.sh.erb`, the app loads modules with:
+```
+module load project/ondemand <app_jupyter_module>
+module load <python_module> <spark_module>
+```
+Ensure equivalent modules are available on your system.
 
-No OOD restart is needed (Batch Connect apps are detected automatically). Visit your OOD dashboard and look for **Jupyter + Spark** under **Interactive Apps > Servers**.
+### To Update the App
+
+```sh
+cd /var/www/ood/apps/sys/bc_osc_jupyter_spark
+git fetch
+git checkout <tag>
+```
 
 ## Configuration
 
 ### form.yml attributes
 
-| Attribute | Description | Default |
-|-----------|-------------|---------|
-| `cluster` | Target cluster ID(s) | `ascend`, `pitzer`, `cardinal` |
-| `jupyterlab_switch` | Toggle for launching LupyterLab vs. Notebook | `` |
-| `working_dir` | Root directory for the Jupyter session | `$HOME` |
-| `bc_num_hours` | Maximum walltime | `1` |
-| `bc_num_slots` | Number of cores requeted for the job | `` |
-| `node_type` | `OSC-specific node types` | `any` |
-| `num_workers` | Number of Spark workers per node | `1` |
-| `spark_configuration_file` | Optional user-provided Spark config file to override defaults. | `` |
-| `supplement_env_file` | Supplementary environment variables file| `` |
-| `only_driver_on_root` | Whether to run the Spark driver only on the master node | `false` |
-| `include_tutorials` | Include access to OSC tutorial/workshop notebooks | `false` |
+| Attribute | Widget | Description | Default |
+|-----------|--------|-------------|---------|
+| `cluster` | select | Target cluster ID(s) | `ascend`, `pitzer`, `cardinal` |
+| `jupyterlab_switch` | check_box | Toggle for launching LupyterLab vs. Notebook | `` |
+| `working_dir` | path_selector | Root directory for the Jupyter session | `$HOME` |
+| `auto_modules_spark`       | auto-select     | Apache Spark module to load                                | auto-detected    |
+| `auto_modules_python`      | auto-select     | Python module to load (match your Conda environment)       | auto-detected    |
+| `auto_modules_app_jupyter` | auto-select     | JupyterLab version module                                  | auto-detected    |
+| `bc_num_hours` | number | Maximum walltime | `1` |
+| `bc_num_slots` | number | Number of cores requeted for the job | `` |
+| `node_type` | select | `OSC-specific node types` | `any` |
+| `num_workers` | number_field | Number of Spark workers per node | `1` |
+| `spark_configuration_file` | path_selector | Override Spark defaults with a custom config file | empty |
+| `supplement_env_file` | path_selector | Load additional environment variables before Spark startup | empty |
+| `only_driver_on_root` | check_box | Only launch the driver on the master node | unchecked |
+| `include_tutorials` | check_box | Include access to OSC tutorial/workshop notebooks | unchecked |
 
 ## Troubleshooting
 <!-- Taken from OSC/bc_osc_jupyter -->
@@ -132,7 +148,7 @@ If your site would like to add your name to our known deployments, please let us
 
 | Site | OOD Version | Scheduler | Status |
 |------|-------------|-----------|--------|
-| Ohio Supercomputer Center | 4.1.4 | Slurm 25.05.4 | Production |
+| Ohio Supercomputer Center | 4.2.2 | Slurm 25.05.4 | Production |
 
 ## Known Limitations
 
