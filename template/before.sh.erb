@@ -1,6 +1,6 @@
 <%-
   num_workers = context.num_workers.to_i
-  total_tasks = num_workers * context.bc_num_slots.to_i
+  total_spark_tasks = num_workers * context.bc_num_nodes.to_i
 
   def extra_spark_config
     if context.spark_configuration_file.empty?
@@ -262,7 +262,7 @@ chmod 700 "${SPARK_WORKER_SCRIPT}"
 
 # Launch workers
 echo "Launching workers..."
-srun --export ALL --ntasks <%= total_tasks %> --ntasks-per-node=<%= num_workers %> -N $SLURM_NNODES "${SPARK_WORKER_SCRIPT}" &
+srun --export ALL --ntasks <%= total_spark_tasks %> --ntasks-per-node=<%= num_workers %> -N $SLURM_NNODES "${SPARK_WORKER_SCRIPT}" &
 
 # Required to support a custom kernel
 export PYSPARK_SUBMIT_ARGS=" \

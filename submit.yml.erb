@@ -1,12 +1,12 @@
 <%-
+  # Retrieve the maximum CPU cores
+  form_item = Configuration.global_bc_form_item('global_default_values')
+  option = form_item[:options].find { |opt| opt[1] == 'cpu-batch' }
+  raise(StandardError, "No 'cpu-batch' option found") if option.nil?
 
-  base_slurm_args = ["--nodes", "#{bc_num_slots}", "--exclusive" ]
-
-  # Remove cluster tag, e.g. pitzer-gpu-exp to gpu-exp
-  partition = global_node_type.split('-').drop(1).join('-')
-
-  slurm_args = base_slurm_args + ["--partition", partition]
-
+  attrs = option[2..-1].reduce(:merge)
+  key = :"data-max-global-num-cores-for-cluster-#{cluster}"
+  max_cores = attrs[key]
 -%>
 ---
 batch_connect:
@@ -18,7 +18,30 @@ batch_connect:
     - "spark_ui_auth_token"
     - "spark_version"
 script:
-  native:
-  <%- slurm_args.each do |arg| %>
-    - "<%= arg %>"
+  # set GPUs
+  <%- if global_gpus.to_i > 0 -%>
+  gpus_per_node: <%= global_gpus %>
   <%- end %>
+  native:
+  # set nodes
+  - "--nodes"
+  - "<%= bc_num_nodes.to_i %>"
+  # set CPUs
+  <%- if cluster == "ascend" and global_job_type =~ /cpu/ -%>
+  - "--ntasks-per-node"
+  - "<%= max_cores.to_i %>"
+  <%- else -%>
+  - "--exclusive"
+  <% end -%>
+  # set partition
+  - "--partition"
+  <%- if global_gpus.to_i > 0 -%>
+  - "<%= global_gpu_type.split('-').drop(1).join('-') %>"
+  <%- else -%>
+  - "batch"
+  <%- end -%>
+  # set memory
+  <%- if global_enable_mem.to_i == 1  -%>
+  - "--mem"
+  - "<%= global_mem.to_i%>G"
+  <%- end -%>
