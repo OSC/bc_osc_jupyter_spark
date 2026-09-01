@@ -1,25 +1,35 @@
 ---
 cluster:
   - "pitzer"
-  - "cardinal"
   - "ascend"
+  - "cardinal"
 form:
   - auto_accounts
   - jupyterlab_switch
   - working_dir
   - auto_modules_spark
   - auto_modules_python
+  - global_job_type
+  - bc_num_nodes
+  - global_num_cores
+  - global_enable_mem
+  - global_mem
   - bc_num_hours
-  - bc_num_slots
-  - node_type
+  - global_gpus
+  - global_gpu_type
+  # - Spark configuration -
   - num_workers
   - spark_configuration_file
   - supplement_env_file
   - only_driver_on_root
   - include_tutorials
+  # - Spark configuration -
   - bc_email_on_started
   - auto_modules_app_jupyter
+  - global_default_values     # required if the global_job_type is used
 attributes:
+  global_num_cores:
+    hide_by_default: true
   auto_modules_spark:
     default: false
   auto_modules_app_jupyter:
@@ -31,8 +41,6 @@ attributes:
       Specify the Python version to match the one used in your Conda environment.
       This ensures compatibility when setting up the Spark cluster and helps prevent issues related
       to Python version mismatches.
-  bc_num_slots:
-    min: 1
   num_workers:
     widget: "number_field"
     value: "1"
@@ -43,25 +51,6 @@ attributes:
       (*useful to reduce memory allocated for each worker*). Should be a
       multiple of the number of cores on the node you chose above. Do **NOT**
       exceed the number of cores on the node.
-  node_type:
-    widget: select
-    label: "Node type"
-    help: |
-      - **any** - Use any available node. This reduces the wait time as there are no node requirements.
-      - **hugemem** - Use a huge memory node. Huge memory nodes have much more RAM and cores than regular nodes.
-    options:
-      - [ 
-          "any", "any",
-          data-max-num-workers-for-cluster-pitzer: 48,
-          data-max-num-workers-for-cluster-cardinal: 96,
-          data-max-num-workers-for-cluster-ascend: 120,
-        ]
-      - [ 
-          "hugemem", "hugemem",
-          data-max-num-workers-for-cluster-pitzer: 80,
-          data-option-for-cluster-cardinal: false,
-          data-option-for-cluster-ascend: false,
-        ]
   spark_configuration_file:
     widget: "path_selector"
     label: "Spark configuration file"
@@ -86,6 +75,7 @@ attributes:
   jupyterlab_switch:
     widget: "check_box"
     label: "Use JupyterLab instead of Jupyter Notebook?"
+    value: "1"
     help: |
       JupyterLab is the next generation of Jupyter, and is completely compatible with existing Jupyter Notebooks.
   working_dir:

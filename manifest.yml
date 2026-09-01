@@ -4,14 +4,12 @@ category: Interactive Apps
 subcategory: Servers
 role: batch_connect
 description: |
-  Launch a [Jupyter Notebook] server using [Python] as well as an
+  Launch a [JupyterLab] server using [Python] as well as an
   [Apache Spark] cluster on [Cardinal], [Ascend] or [Pitzer].
-  Check the [Changelog] for the recent updates.
 
-  [Jupyter Notebook]: https://jupyter.org/
+  [JupyterLab]: https://jupyter.org/
   [Python]: https://www.python.org/
   [Apache Spark]: https://spark.apache.org/
   [Cardinal]: https://www.osc.edu/resources/technical_support/supercomputers/cardinal
   [Ascend]: https://www.osc.edu/resources/technical_support/supercomputers/ascend
   [Pitzer]: https://www.osc.edu/resources/technical_support/supercomputers/pitzer
-  [Changelog]: https://github.com/OSC/bc_osc_jupyter_spark/releases
