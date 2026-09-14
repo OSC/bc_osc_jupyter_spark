@@ -30,6 +30,9 @@ form:
 attributes:
   global_num_cores:
     hide_by_default: true
+  global_gpus:
+    help: |
+      **<span style="color:#ba0c2f">Note that GPU count setting will be ignored because the entire node will be allocated.</span>**
   auto_modules_spark:
     default: false
   auto_modules_app_jupyter:
